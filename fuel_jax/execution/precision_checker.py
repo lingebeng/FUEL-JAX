@@ -1,15 +1,12 @@
 """Precision comparison utilities."""
 
-import logging
 from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
 
-from .config import TOLERANCE
+from ..config import TOLERANCE
 from .executor import ExecutionStatus, TestExecutionResult
-
-logger = logging.getLogger(__name__)
 
 
 class ComparisonStatus(Enum):

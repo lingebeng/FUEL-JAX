@@ -1,18 +1,19 @@
 """Report generation for precision testing results."""
 
 import json
-import logging
+import pprint
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .csv_reader import OperatorPair
-from .executor import ExecutionStatus
-from .precision_checker import ComparisonResult, ComparisonStatus
-from .test_generator import TestCase
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+from ..execution.executor import ExecutionStatus
+from ..execution.precision_checker import ComparisonResult, ComparisonStatus
+from ..generation.test_generator import TestCase
+from ..utils.utils import ensure_dir, get_repo_root, read_text, write_json, write_text
+from .csv_reader import OperatorPair
 
 
 @dataclass
@@ -140,7 +141,7 @@ class Reporter:
 
     def _ensure_dir(self, path: Path):
         """Ensure directory exists."""
-        path.mkdir(parents=True, exist_ok=True)
+        ensure_dir(path)
 
     def save_report(self, report: OperatorReport, iteration: int = 0):
         """
@@ -156,7 +157,7 @@ class Reporter:
         # Save markdown report
         md_path = operator_dir / f"feedback_{iteration:02d}.md"
         md_content = self._generate_markdown(report)
-        md_path.write_text(md_content, encoding="utf-8")
+        write_text(md_path, md_content)
         logger.info(f"Saved markdown report: {md_path}")
 
         # Save raw JSON results
@@ -166,18 +167,16 @@ class Reporter:
         existing_results = []
         if json_path.exists():
             try:
-                with open(json_path, encoding="utf-8") as f:
-                    existing_data = json.load(f)
-                    if isinstance(existing_data, list):
-                        existing_results = existing_data
+                existing_data = json.loads(read_text(json_path))
+                if isinstance(existing_data, list):
+                    existing_results = existing_data
             except json.JSONDecodeError:
                 pass
 
         # Append new results
         existing_results.append(report.to_dict())
 
-        with open(json_path, "w", encoding="utf-8") as f:
-            json.dump(existing_results, f, indent=2)
+        write_json(json_path, existing_results)
         logger.info(f"Saved JSON results: {json_path}")
 
     def _generate_markdown(self, report: OperatorReport) -> str:
@@ -205,11 +204,9 @@ class Reporter:
 
     def _load_template(self) -> str:
         """Load the feedback template."""
-        template_path = (
-            Path(__file__).parent.parent / "prompts" / "als" / "als_feedback.md"
-        )
+        template_path = get_repo_root() / "prompts" / "als" / "als_feedback.md"
         if template_path.exists():
-            return template_path.read_text(encoding="utf-8")
+            return read_text(template_path)
 
         # Fallback template if file doesn't exist
         return """# Feedback Report
@@ -415,5 +412,107 @@ class Reporter:
         self._ensure_dir(self.output_dir)
         summary_content = self.generate_summary_report(all_reports)
         summary_path = self.output_dir / "summary.md"
-        summary_path.write_text(summary_content, encoding="utf-8")
+        write_text(summary_path, summary_content)
         logger.info(f"Saved summary report: {summary_path}")
+
+    def save_test_cases(
+        self, operator: OperatorPair, test_cases: list[TestCase]
+    ) -> None:
+        """Save generated test cases as standalone Python files."""
+        operator_dir = self._get_operator_dir(operator)
+        self._ensure_dir(operator_dir)
+
+        for i, test_case in enumerate(test_cases):
+            file_path = operator_dir / f"test_{i:02d}.py"
+            content = self._render_test_case(operator, test_case)
+            write_text(file_path, content)
+
+        logger.info(f"Saved {len(test_cases)} test cases to {operator_dir.as_posix()}")
+
+    def _render_test_case(self, operator: OperatorPair, test_case: TestCase) -> str:
+        """Render a single test case to Python source text."""
+        input_specs = [
+            {
+                "name": spec.name,
+                "shape": list(spec.shape),
+                "dtype": spec.dtype,
+                "value_strategy": spec.value_strategy,
+                "value_params": spec.value_params,
+            }
+            for spec in test_case.input_specs
+        ]
+
+        input_specs_literal = pprint.pformat(input_specs, width=88)
+
+        return (
+            "from __future__ import annotations\n"
+            "\n"
+            f'"""Auto-generated test case for {operator.jax_op} <-> {operator.torch_op}."""\n'
+            "\n"
+            "import jax\n"
+            "import jax.numpy as jnp\n"
+            "import numpy as np\n"
+            "import torch\n"
+            "from pathlib import Path\n"
+            "import sys\n"
+            "\n"
+            "def _import_generate_input():\n"
+            "    try:\n"
+            "        from fuel_jax.generation.fuzzing_inputs import generate_input\n"
+            "        return generate_input\n"
+            "    except ModuleNotFoundError:\n"
+            "        repo_root = Path(__file__).resolve().parents[2]\n"
+            "        if str(repo_root) not in sys.path:\n"
+            "            sys.path.insert(0, str(repo_root))\n"
+            "        from fuel_jax.generation.fuzzing_inputs import generate_input\n"
+            "        return generate_input\n"
+            "\n"
+            f"TEST_ID = {test_case.test_id!r}\n"
+            f"DESCRIPTION = {test_case.description!r}\n"
+            f"JAX_CODE = {test_case.jax_code!r}\n"
+            f"TORCH_CODE = {test_case.torch_code!r}\n"
+            "\n"
+            f"INPUT_SPECS = {input_specs_literal}\n"
+            "\n"
+            "def build_inputs() -> dict[str, object]:\n"
+            "    generate_input = _import_generate_input()\n"
+            "    inputs: dict[str, object] = {}\n"
+            "    for spec in INPUT_SPECS:\n"
+            '        inputs[spec["name"]] = generate_input(\n'
+            '            shape=spec["shape"],\n'
+            '            dtype=spec["dtype"],\n'
+            '            value_strategy=spec["value_strategy"],\n'
+            '            value_params=spec.get("value_params", {}),\n'
+            "        )\n"
+            "    return inputs\n"
+            "\n"
+            "def run_jax(inputs: dict[str, object]):\n"
+            "    jax_inputs: dict[str, object] = {}\n"
+            "    for name, value in inputs.items():\n"
+            "        if isinstance(value, np.ndarray):\n"
+            "            jax_inputs[name] = jnp.array(value)\n"
+            "        else:\n"
+            "            jax_inputs[name] = value\n"
+            '    exec_globals = {"jax": jax, "jnp": jnp, **jax_inputs}\n'
+            "    return eval(JAX_CODE, exec_globals)\n"
+            "\n"
+            "def run_torch(inputs: dict[str, object]):\n"
+            "    torch_inputs: dict[str, object] = {}\n"
+            "    for name, value in inputs.items():\n"
+            "        if isinstance(value, np.ndarray):\n"
+            "            torch_inputs[name] = torch.from_numpy(value)\n"
+            "        else:\n"
+            "            torch_inputs[name] = value\n"
+            '    exec_globals = {"torch": torch, **torch_inputs}\n'
+            "    return eval(TORCH_CODE, exec_globals)\n"
+            "\n"
+            'if __name__ == "__main__":\n'
+            "    inputs = build_inputs()\n"
+            "    jax_out = run_jax(inputs)\n"
+            "    torch_out = run_torch(inputs)\n"
+            "    np.set_printoptions(precision=6, suppress=True)\n"
+            "    jax_np = np.array(jax_out)\n"
+            '    torch_np = torch_out.detach().cpu().numpy() if hasattr(torch_out, "detach") else np.array(torch_out)\n'
+            '    print("jax:", jax_np)\n'
+            '    print("torch:", torch_np)\n'
+        )

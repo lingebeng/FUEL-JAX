@@ -1,18 +1,14 @@
 """Test case generator that combines LLM generation with fallback strategies."""
 
-import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from .config import LLMConfig
-from .csv_reader import OperatorPair
-from .fuzzing_inputs import (
-    generate_default_test_inputs,
-    generate_edge_case_inputs,
-)
-from .llm_client import LLMClient
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+from ..config import LLMConfig
+from ..io.csv_reader import OperatorPair
+from ..llm.client import LLMClient
+from .fuzzing_inputs import generate_default_test_inputs, generate_edge_case_inputs
 
 # Operators that require two inputs (binary operators)
 BINARY_OPERATORS = {

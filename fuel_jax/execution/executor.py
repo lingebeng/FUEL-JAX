@@ -1,16 +1,14 @@
 """JAX and PyTorch operator executor."""
 
-import logging
 import traceback
 from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
+from loguru import logger
 
-from .fuzzing_inputs import generate_input
-from .test_generator import InputSpec, TestCase
-
-logger = logging.getLogger(__name__)
+from ..generation.fuzzing_inputs import generate_input
+from ..generation.test_generator import InputSpec, TestCase
 
 
 class ExecutionStatus(Enum):

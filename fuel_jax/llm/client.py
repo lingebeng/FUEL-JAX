@@ -1,15 +1,13 @@
 """LLM API client for test case generation."""
 
 import json
-import logging
-from pathlib import Path
 from typing import Any
 
 import httpx
+from loguru import logger
 
-from .config import LLMConfig, load_llm_config_from_env
-
-logger = logging.getLogger(__name__)
+from ..config import LLMConfig, load_llm_config_from_env
+from ..utils.utils import get_repo_root, read_text
 
 
 class LLMClient:
@@ -32,10 +30,10 @@ class LLMClient:
 
     def _load_prompt_template(self) -> str:
         """Load the test generation prompt template."""
-        prompt_path = Path(__file__).parent.parent / "prompts" / "gen" / "gen_test.md"
+        prompt_path = get_repo_root() / "prompts" / "gen" / "gen_test.md"
         if not prompt_path.exists():
             raise FileNotFoundError(f"Prompt template not found: {prompt_path}")
-        return prompt_path.read_text(encoding="utf-8")
+        return read_text(prompt_path)
 
     def generate_test_cases(
         self,
