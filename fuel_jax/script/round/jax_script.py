@@ -8,10 +8,10 @@ from ...utils.utils import save_npz, load_npz, ndarray2Array, Array2ndarray
 
 def main(
     input_file: Path = typer.Option(
-        ROOT_DIR / "input" / "abs" / "test_00.npz", help="Input file path"
+        ROOT_DIR / "input" / "round" / "test_00.npz", help="Input file path"
     ),
     output_file: Path = typer.Option(
-        ROOT_DIR / "output" / "abs" / "jax" / "test_00.npz", help="Output file path"
+        ROOT_DIR / "output" / "round" / "jax" / "test_00.npz", help="Output file path"
     ),
     precision: str = typer.Option("FP32", help="Precision setting"),
     device: str = typer.Option("cpu", help="Device setting"),
@@ -30,7 +30,7 @@ def main(
 
     # Define the JAX function to compute absolute values
     def fn(x):
-        return jax.lax.abs(x)
+        return jax.lax.round(x)
 
     try:
         save_kwargs = {}

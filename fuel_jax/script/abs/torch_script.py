@@ -13,10 +13,10 @@ from ...utils.utils import (
 
 def main(
     input_file: Path = typer.Option(
-        ROOT_DIR / "input" / "abs" / "test.npz", help="Input file path"
+        ROOT_DIR / "input" / "abs" / "test_00.npz", help="Input file path"
     ),
     output_file: Path = typer.Option(
-        ROOT_DIR / "output" / "abs" / "torch" / "test.npz", help="Output file path"
+        ROOT_DIR / "output" / "abs" / "torch" / "test_00.npz", help="Output file path"
     ),
     precision: str = typer.Option("FP32", help="Precision setting"),
     device: str = typer.Option("cpu", help="Device setting"),
@@ -34,15 +34,22 @@ def main(
     def fn(x):
         return torch.abs(x)
 
-    out = tensor2ndarray(fn(x))
+    try:
+        save_kwargs = {}
+        out = tensor2ndarray(fn(x))
+        save_kwargs[f"out_torch_{device}"] = out
+        if compile_flag:
+            fn_compile = torch.compile(fn)
 
-    save_kwargs = {f"out_torch_{device}": out}
-    if compile_flag:
-        fn = torch.compile(fn)
-        out_jit = tensor2ndarray(fn(x))
-        save_kwargs[f"out_torch_inductor_{device}"] = out_jit
+            out_jit = tensor2ndarray(fn_compile(x))
+            save_kwargs[f"out_torch_inductor_{device}"] = out_jit
 
-    save_npz(output_file, **save_kwargs)
+        if save_kwargs:
+            save_npz(output_file, **save_kwargs)
+        exit(0)
+    except Exception as e:
+        print(e)
+        exit(1)
 
 
 if __name__ == "__main__":

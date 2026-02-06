@@ -211,3 +211,4 @@ __marimo__/
 uv.lock
 output/
 input/
+.DS_Store

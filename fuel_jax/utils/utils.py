@@ -40,6 +40,9 @@ def ndarray2tensor(arr: np.ndarray, dtype=None):
 
 
 def tensor2ndarray(tensor: torch.tensor):
+    if tensor is None:
+        return None
+    tensor = tensor.to(torch.float32)
     return np.array(tensor, dtype=np.float32)
 
 
@@ -51,6 +54,8 @@ def ndarray2Array(arr: np.ndarray, dtype=None):
 
 
 def Array2ndarray(Arr: jnp.array):
+    if Arr is None:
+        return None
     return np.array(Arr, dtype=np.float32)
 
 
@@ -64,6 +69,19 @@ def get_torch_device(device: str) -> str:
             logger.waring("GPU/MPS not available, falling back to CPU.")
             return "cpu"
     return device
+
+
+def list_ops(test_id):
+    input_root = ROOT_DIR / "input"
+    ops = []
+    if not input_root.exists():
+        return ops
+    for child in sorted(input_root.iterdir()):
+        if not child.is_dir():
+            continue
+        if (child / f"test_{str(test_id).zfill(2)}.npz").exists():
+            ops.append(child.name)
+    return ops
 
 
 if __name__ == "__main__":

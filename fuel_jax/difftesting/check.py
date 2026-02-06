@@ -15,9 +15,11 @@ def testing(x: np.ndarray, y: np.ndarray, atol: float, rtol: float):
         else:
             logger.warning("Inconsistent")
         logger.info(f"max_diff:{max_diff}")
+        return {"status": "ok" if is_close else "mismatch", "max_diff": max_diff}
 
     except Exception as e:
         logger.error(e)
+        return {"status": "error", "max_diff": None}
 
 
 def check(op_name, precision, test_id):
@@ -27,23 +29,36 @@ def check(op_name, precision, test_id):
             / "output"
             / op_name
             / framework
+            / precision
             / f"test_{str(test_id).zfill(2)}.npz"
         )
-        data = load_npz(file_path=filename)
-        return data
+        if not filename.exists():
+            logger.warning(f"Missing output: {filename}")
+            return {}
+        try:
+            return load_npz(file_path=filename)
+        except Exception as e:
+            logger.error(e)
+            return {}
 
     output_jax, output_torch = get_output("jax"), get_output("torch")
 
     output = {**output_jax, **output_torch}
 
     k_output = list(output.keys())
+    if len(k_output) < 2:
+        logger.warning("Not enough outputs to compare, skipping.")
+        return {"status": "skip", "max_diff": None}
 
     atol, rtol = TOLERANCE[precision]["atol"], TOLERANCE[precision]["rtol"]
 
+    last = {"status": "skip", "max_diff": None}
     for x, y in comb(k_output, 2):
         logger.info(f"Difftesting between {x} and {y}")
-        testing(output[x], output[y], atol=atol, rtol=rtol)
+        last = testing(output[x], output[y], atol=atol, rtol=rtol)
+    return last
 
 
 if __name__ == "__main__":
-    check("abs", "FP32", 0)
+    # check("abs", "FP32", 0)
+    check("acos", "FP32", 0)
