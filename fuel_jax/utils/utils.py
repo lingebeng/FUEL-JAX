@@ -40,11 +40,6 @@ def ndarray2tensor(arr: np.ndarray, dtype=None):
         return torch.from_numpy(arr).to(dtype)
 
 
-def tensor2ndarray(tensor: torch.tensor):
-    tensor = tensor.to(torch.float32)
-    return np.array(tensor, dtype=np.float32)
-
-
 def ndarray2Array(arr: np.ndarray, dtype=None):
     if dtype is None:
         return jnp.array(arr)
@@ -52,7 +47,13 @@ def ndarray2Array(arr: np.ndarray, dtype=None):
         return jnp.array(arr, dtype=dtype)
 
 
-def Array2ndarray(Arr: jnp.array):
+def tensor2ndarray(tensor):
+    # @haifeng only tensor cpu can transform ndarray
+    tensor = tensor.to(torch.float32).to("cpu")
+    return np.array(tensor, dtype=np.float32)
+
+
+def Array2ndarray(Arr):
     return np.array(Arr, dtype=np.float32)
 
 
@@ -63,7 +64,7 @@ def get_torch_device(device: str) -> str:
         elif torch.backends.mps.is_available():
             return "mps"
         else:
-            logger.waring("GPU/MPS not available, falling back to CPU.")
+            logger.warning("GPU/MPS not available, falling back to CPU.")
             return "cpu"
     return device
 
@@ -85,6 +86,19 @@ def load_yaml(yaml_path: Path) -> dict:
     with yaml_path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data
+
+
+def parse_shape(value: str) -> tuple:
+    if value is None:
+        return (4, 8)
+    text = value.strip().lower()
+    if not text or text in {"scalar", "none"}:
+        return ()
+    return tuple(int(x) for x in text.split(",") if x.strip())
+
+
+def get_op_key(op_name: str) -> str:
+    return op_name.split(".")[-1]
 
 
 if __name__ == "__main__":

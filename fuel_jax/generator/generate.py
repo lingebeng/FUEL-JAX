@@ -1,7 +1,7 @@
 from pathlib import Path
 import numpy as np
 from ..config.config import ROOT_DIR
-from ..utils.utils import load_yaml
+from ..utils.utils import load_yaml, save_npz
 
 
 class Generator:
@@ -75,5 +75,6 @@ class Generator:
 if __name__ == "__main__":
     gen = Generator(seed=42)
     # print(gen.rule)
-    print(gen.generate("jax.lax.integer_pow", shape=(2, 3)))
+    inp = gen.generate("jax.lax.integer_pow", shape=(2, 3))
+    save_npz(ROOT_DIR / "dataset/jax_lax_integer_pow_input.npz", **inp)
     # gen.generate("jax.lax.sin", shape=(4, 4))

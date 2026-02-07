@@ -12,35 +12,35 @@ definitions:
     uniform_std: &strat_std
       strategy: uniform
       range: [-10.0, 10.0]
-    
+
     normal_std: &strat_normal
       strategy: normal
       mean: 0.0
       std: 1.0
-    
+
     int_scalar: &strat_int_scalar
       strategy: int
       range: [0, 100]
-    
+
     uniform_pos: &strat_pos  # (0, 10]
       strategy: uniform
       range: [0.001, 10.0]
-      
+
     uniform_non_neg: &strat_non_neg # [0, 10]
       strategy: uniform
       range: [0.0, 10.0]
 
     # B. 特殊定义域策略
     # 用于 acos, asin, atanh (-1, 1)
-    unit_interval: &strat_unit 
+    unit_interval: &strat_unit
       strategy: uniform
       range: [-0.99, 0.99]
-    
+
     # 用于 acosh (>= 1)
-    large_pos: &strat_large_pos 
+    large_pos: &strat_large_pos
       strategy: uniform
       range: [1.01, 100.0]
-    
+
     # 用于除法分母 (排除 0)
     non_zero: &strat_nonzero
       strategy: uniform
@@ -68,12 +68,12 @@ unary_operators:
   - { op_name: jax.lax.sign,       input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.square,     input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.cbrt,       input: [x],   generation: {x: *strat_normal} }
-  
+
   # 需注意定义域的算子
   - op_name: jax.lax.reciprocal
     input: [x]
     generation: {x: *strat_nonzero} # 避免 1/0
-  
+
   - op_name: jax.lax.sqrt
     input: [x]
     generation: {x: *strat_non_neg} # sqrt(x) -> x >= 0
@@ -150,7 +150,7 @@ unary_operators:
   - { op_name: jax.lax.erf,        input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.erfc,       input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.erf_inv,    input: [x],  generation: {x: *strat_unit} } # Domain (-1, 1)
-  
+
   # Gamma 类通常需要正数
   - { op_name: jax.lax.lgamma,     input: [x],  generation: {x: *strat_pos} }
   - { op_name: jax.lax.digamma,    input: [x],  generation: {x: *strat_pos} }
@@ -169,7 +169,7 @@ binary_operators:
   - { op_name: jax.lax.mul, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.max, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.min, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
-  
+
   # 除法与求余 (防除零)
   - op_name: jax.lax.div
     input: [x, y]
@@ -187,7 +187,7 @@ binary_operators:
   # 整数幂 (y 通常作为静态参数或整数 Tensor)
   - op_name: jax.lax.integer_pow
     input: [x, y]
-    generation: 
+    generation:
       x: *strat_normal
       y: *strat_int_scalar # 整数幂次
 
