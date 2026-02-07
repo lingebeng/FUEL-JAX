@@ -13,6 +13,16 @@ definitions:
       strategy: uniform
       range: [-10.0, 10.0]
     
+    normal_std: &strat_normal
+      strategy: normal
+      mean: 0.0
+      std: 1.0
+    
+    int_scalar: &strat_int_scalar
+      strategy: uniform_int
+      range: [0, 100]
+      shape: []
+    
     uniform_pos: &strat_pos  # (0, 10]
       strategy: uniform
       range: [0.001, 10.0]
@@ -54,11 +64,11 @@ unary_operators:
   - { op_name: jax.lax.abs,        input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.ceil,       input: [x],   generation: {x: *strat_std} }
   - { op_name: jax.lax.floor,      input: [x],   generation: {x: *strat_std} }
-  - { op_name: jax.lax.neg,        input: [x],  generation: {x: *strat_std} }
+  - { op_name: jax.lax.neg,        input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.round,      input: [x],   generation: {x: *strat_std} }
   - { op_name: jax.lax.sign,       input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.square,     input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.cbrt,       input: [x],   generation: {x: *strat_std} }
+  - { op_name: jax.lax.square,     input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.cbrt,       input: [x],   generation: {x: *strat_normal} }
   
   # 需注意定义域的算子
   - op_name: jax.lax.reciprocal
@@ -76,10 +86,10 @@ unary_operators:
   # ----------------------------------------------------------------------------
   # 1.2 指数与对数运算
   # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.exp,      input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.exp2,     input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.expm1,    input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.logistic, input: [x],  generation: {x: *strat_std} }
+  - { op_name: jax.lax.exp,      input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.exp2,     input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.expm1,    input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.logistic, input: [x],  generation: {x: *strat_normal} }
 
   # 对数需 x > 0
   - { op_name: jax.lax.log,      input: [x],  generation: {x: *strat_pos} }
@@ -92,18 +102,18 @@ unary_operators:
   # 全定义域函数
   - { op_name: jax.lax.cos,  input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.sin,  input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.tan,  input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.cosh, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.sinh, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.tanh, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.atan, input: [x],  generation: {x: *strat_std} }
+  - { op_name: jax.lax.tan,  input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.cosh, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.sinh, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.tanh, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.atan, input: [x],  generation: {x: *strat_normal} }
 
   # 限制定义域函数
   - { op_name: jax.lax.acos,  input: [x],  generation: {x: *strat_unit} } # [-1, 1]
   - { op_name: jax.lax.asin,  input: [x],  generation: {x: *strat_unit} } # [-1, 1]
   - { op_name: jax.lax.atanh, input: [x],  generation: {x: *strat_unit} } # (-1, 1)
   - { op_name: jax.lax.acosh, input: [x],  generation: {x: *strat_large_pos} } # >= 1
-  - { op_name: jax.lax.asinh, input: [x],  generation: {x: *strat_std} } # 全定义域
+  - { op_name: jax.lax.asinh, input: [x],  generation: {x: *strat_normal} } # 全定义域
 
   # ----------------------------------------------------------------------------
   # 1.4 判定与逻辑
@@ -111,35 +121,35 @@ unary_operators:
   - op_name: jax.lax.is_finite
     input: [x]
     constraints: {output_dtype_rule: ALWAYS_BOOL}
-    generation: {x: *strat_std}
+    generation: {x: *strat_normal}
 
   # ----------------------------------------------------------------------------
   # 1.5 复数与类型操作
   # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.conj, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.real, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.imag, input: [x],  generation: {x: *strat_std} }
+  - { op_name: jax.lax.conj, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.real, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.imag, input: [x],  generation: {x: *strat_normal} }
 
   # 特殊：涉及类型转换参数 (Attribute)
   - op_name: jax.lax.convert_element_type
     signature:
       inputs: [{name: operand, type: tensor}]
       attributes: [{name: new_dtype, type: dtype}]
-      generation: {operand: *strat_std}
+      generation: {operand: *strat_normal}
 
   - op_name: jax.lax.bitcast_convert_type
     signature:
       inputs: [{name: operand, type: tensor}]
       attributes: [{name: new_dtype, type: dtype}]
-      generation: {operand: *strat_std}
+      generation: {operand: *strat_normal}
 
   # ----------------------------------------------------------------------------
   # 1.6 特殊函数
   # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.bessel_i0e, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.bessel_i1e, input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.erf,        input: [x],  generation: {x: *strat_std} }
-  - { op_name: jax.lax.erfc,       input: [x],  generation: {x: *strat_std} }
+  - { op_name: jax.lax.bessel_i0e, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.bessel_i1e, input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.erf,        input: [x],  generation: {x: *strat_normal} }
+  - { op_name: jax.lax.erfc,       input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.erf_inv,    input: [x],  generation: {x: *strat_unit} } # Domain (-1, 1)
   
   # Gamma 类通常需要正数
@@ -155,32 +165,32 @@ binary_operators:
   # ----------------------------------------------------------------------------
   # 2.1 算术运算
   # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.add, input: [x, y],  generation: {x: *strat_std, y: *strat_std} }
-  - { op_name: jax.lax.sub, input: [x, y],  generation: {x: *strat_std, y: *strat_std} }
-  - { op_name: jax.lax.mul, input: [x, y],  generation: {x: *strat_std, y: *strat_std} }
-  - { op_name: jax.lax.max, input: [x, y],  generation: {x: *strat_std, y: *strat_std} }
-  - { op_name: jax.lax.min, input: [x, y],  generation: {x: *strat_std, y: *strat_std} }
+  - { op_name: jax.lax.add, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
+  - { op_name: jax.lax.sub, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
+  - { op_name: jax.lax.mul, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
+  - { op_name: jax.lax.max, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
+  - { op_name: jax.lax.min, input: [x, y],  generation: {x: *strat_normal, y: *strat_normal} }
   
   # 除法与求余 (防除零)
   - op_name: jax.lax.div
     input: [x, y]
-    generation: {x: *strat_std, y: *strat_nonzero}
+    generation: {x: *strat_normal, y: *strat_nonzero}
 
   - op_name: jax.lax.rem
     input: [x, y]
-    generation: {x: *strat_std, y: *strat_nonzero}
+    generation: {x: *strat_normal, y: *strat_nonzero}
 
   # 幂运算 (避免负底数+分数幂产生的 NaN)
   - op_name: jax.lax.pow
     input: [x, y]
-    generation: {x: *strat_pos, y: *strat_std}
+    generation: {x: *strat_pos, y: *strat_normal}
 
   # 整数幂 (y 通常作为静态参数或整数 Tensor)
   - op_name: jax.lax.integer_pow
     input: [x, y]
     generation: 
-      x: *strat_std
-      y: {strategy: uniform, range: [0, 5]} # 限制幂次不要太大，防溢出
+      x: *strat_normal
+      y: *strat_int_scalar # 整数幂次
 
   # ----------------------------------------------------------------------------
   # 2.2 特殊与其他运算
@@ -192,7 +202,7 @@ binary_operators:
   - op_name: jax.lax.complex
     input: [x, y]
     #  输入实部虚部为浮点
-    generation: {x: *strat_std, y: *strat_std}
+    generation: {x: *strat_normal, y: *strat_normal}
 
   - op_name: jax.lax.nextafter
     input: [x1, x2]
@@ -206,4 +216,4 @@ binary_operators:
   # Polygamma (n 为阶数，通常是整数)
   - op_name: jax.lax.polygamma
     input: [n, x]
-    generation: {n: {strategy: uniform, range: [0, 3]}, x: *strat_std}
+    generation: {n: *strat_int_scalar, x: *strat_normal}
