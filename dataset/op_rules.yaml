@@ -1,0 +1,321 @@
+# Input generation rules for jax->torch difftesting.
+# You can override per-op specs under ops: to expand coverage.
+
+defaults:
+  seed: 0
+  shapes:
+    - [8]
+    - [4, 8]
+    - [2, 3, 4]
+  range: [-1.0, 1.0]
+  int_range: [0, 10]
+  bool_rate: 0.5
+
+types:
+  elementwise:
+    arity: 1
+    skip: false
+  reduction:
+    arity: 1
+    skip: false
+    axis: 0
+    keepdims: false
+  array:
+    arity: 1
+    skip: true
+  linalg:
+    arity: 1
+    skip: true
+  other:
+    arity: 1
+    skip: true
+
+ops:
+  # Domains
+  jax.lax.acos:
+    range: [-1.0, 1.0]
+  jax.lax.asin:
+    range: [-1.0, 1.0]
+  jax.lax.acosh:
+    range: [1.0, 5.0]
+  jax.lax.atanh:
+    range: [-0.9, 0.9]
+  jax.lax.log:
+    range: [1.0e-3, 5.0]
+  jax.lax.log1p:
+    range: [-0.9, 5.0]
+  jax.lax.sqrt:
+    range: [0.0, 5.0]
+  jax.lax.rsqrt:
+    range: [1.0e-3, 5.0]
+  jax.lax.reciprocal:
+    range: [1.0e-3, 5.0]
+  jax.lax.reduce_and:
+    dtype: bool
+  jax.lax.reduce_or:
+    dtype: bool
+
+  # Binary elementwise
+  jax.lax.add:
+    arity: 2
+  jax.lax.sub:
+    arity: 2
+  jax.lax.mul:
+    arity: 2
+  jax.lax.div:
+    arity: 2
+    inputs:
+      - {}
+      - range: [0.1, 5.0]
+  jax.lax.rem:
+    arity: 2
+    inputs:
+      - {}
+      - range: [1.0, 5.0]
+  jax.lax.pow:
+    arity: 2
+    inputs:
+      - range: [0.1, 5.0]
+      - dtype: int
+        int_range: [0, 4]
+        shape: []
+  jax.lax.integer_pow:
+    arity: 2
+    inputs:
+      - {}
+      - dtype: int
+        int_range: [0, 4]
+        shape: []
+  jax.lax.atan2:
+    arity: 2
+  jax.lax.max:
+    arity: 2
+  jax.lax.min:
+    arity: 2
+  jax.lax.eq:
+    arity: 2
+  jax.lax.ne:
+    arity: 2
+  jax.lax.gt:
+    arity: 2
+  jax.lax.ge:
+    arity: 2
+  jax.lax.lt:
+    arity: 2
+  jax.lax.le:
+    arity: 2
+  jax.lax.nextafter:
+    arity: 2
+  jax.lax.complex:
+    arity: 2
+
+  # Ternary elementwise
+  jax.lax.clamp:
+    arity: 3
+    clamp: true
+
+  # Special domains
+  jax.lax.betainc:
+    arity: 3
+    inputs:
+      - range: [0.5, 5.0]
+      - range: [0.5, 5.0]
+      - range: [0.0, 1.0]
+  jax.lax.polygamma:
+    arity: 2
+    inputs:
+      - dtype: int
+        int_range: [0, 3]
+        shape: []
+      - range: [0.1, 5.0]
+  jax.lax.zeta:
+    arity: 2
+    inputs:
+      - range: [1.1, 5.0]
+      - range: [0.1, 5.0]
+
+  # Integer-only ops (skip for FP32/BF16/FP8)
+  jax.lax.bitwise_and:
+    skip: true
+  jax.lax.bitwise_or:
+    skip: true
+  jax.lax.bitwise_xor:
+    skip: true
+  jax.lax.bitwise_not:
+    skip: true
+  jax.lax.clz:
+    skip: true
+  jax.lax.population_count:
+    skip: true
+
+  # Requires dtype parameter or different semantics
+  jax.lax.bitcast_convert_type:
+    skip: true
+
+  # Complex parameter ops (enable with explicit params later)
+  jax.lax.broadcast:
+    skip: true
+  jax.lax.broadcast_in_dim:
+    skip: true
+  jax.lax.broadcast_to_rank:
+    skip: true
+  jax.lax.broadcasted_iota:
+    skip: true
+  jax.lax.collapse:
+    skip: true
+  jax.lax.concatenate:
+    skip: true
+  jax.lax.convert_element_type:
+    skip: true
+  jax.lax.dynamic_index_in_dim:
+    skip: true
+  jax.lax.dynamic_slice:
+    skip: true
+  jax.lax.dynamic_slice_in_dim:
+    skip: true
+  jax.lax.dynamic_update_index_in_dim:
+    skip: true
+  jax.lax.dynamic_update_slice:
+    skip: true
+  jax.lax.dynamic_update_slice_in_dim:
+    skip: true
+  jax.lax.expand_dims:
+    skip: true
+  jax.lax.full:
+    skip: true
+  jax.lax.full_like:
+    skip: true
+  jax.lax.index_in_dim:
+    skip: true
+  jax.lax.iota:
+    skip: true
+  jax.lax.pad:
+    skip: true
+  jax.lax.reshape:
+    skip: true
+  jax.lax.rev:
+    skip: true
+  jax.lax.slice:
+    skip: true
+  jax.lax.slice_in_dim:
+    skip: true
+  jax.lax.split:
+    skip: true
+  jax.lax.squeeze:
+    skip: true
+  jax.lax.tile:
+    skip: true
+  jax.lax.transpose:
+    skip: true
+
+  # Reduction ops needing extra params (enable later)
+  jax.lax.reduce:
+    skip: true
+  jax.lax.reduce_window:
+    skip: true
+  jax.lax.approx_max_k:
+    skip: true
+  jax.lax.approx_min_k:
+    skip: true
+  jax.lax.top_k:
+    skip: true
+
+  # Linalg/other complex ops (enable with explicit params later)
+  jax.lax.cholesky:
+    skip: true
+  jax.lax.cholesky_update:
+    skip: true
+  jax.lax.eig:
+    skip: true
+  jax.lax.eigh:
+    skip: true
+  jax.lax.hessenberg:
+    skip: true
+  jax.lax.householder_product:
+    skip: true
+  jax.lax.lu:
+    skip: true
+  jax.lax.lu_pivots_to_permutation:
+    skip: true
+  jax.lax.qdwh:
+    skip: true
+  jax.lax.qr:
+    skip: true
+  jax.lax.schur:
+    skip: true
+  jax.lax.svd:
+    skip: true
+  jax.lax.symmetric_product:
+    skip: true
+  jax.lax.triangular_solve:
+    skip: true
+  jax.lax.tridiagonal:
+    skip: true
+  jax.lax.tridiagonal_solve:
+    skip: true
+  jax.lax.after_all:
+    skip: true
+  jax.lax.batch_matmul:
+    skip: true
+  jax.lax.conv:
+    skip: true
+  jax.lax.conv_dimension_numbers:
+    skip: true
+  jax.lax.conv_general_dilated:
+    skip: true
+  jax.lax.conv_general_dilated_local:
+    skip: true
+  jax.lax.conv_general_dilated_patches:
+    skip: true
+  jax.lax.conv_transpose:
+    skip: true
+  jax.lax.conv_with_general_padding:
+    skip: true
+  jax.lax.dot:
+    skip: true
+  jax.lax.dot_general:
+    skip: true
+  jax.lax.empty:
+    skip: true
+  jax.lax.fft:
+    skip: true
+  jax.lax.gather:
+    skip: true
+  jax.lax.index_take:
+    skip: true
+  jax.lax.optimization_barrier:
+    skip: true
+  jax.lax.platform_dependent:
+    skip: true
+  jax.lax.ragged_all_to_all:
+    skip: true
+  jax.lax.ragged_dot:
+    skip: true
+  jax.lax.ragged_dot_general:
+    skip: true
+  jax.lax.rng_bit_generator:
+    skip: true
+  jax.lax.rng_uniform:
+    skip: true
+  jax.lax.scaled_dot:
+    skip: true
+  jax.lax.scatter:
+    skip: true
+  jax.lax.scatter_add:
+    skip: true
+  jax.lax.scatter_apply:
+    skip: true
+  jax.lax.scatter_max:
+    skip: true
+  jax.lax.scatter_min:
+    skip: true
+  jax.lax.scatter_mul:
+    skip: true
+  jax.lax.scatter_sub:
+    skip: true
+  jax.lax.sort:
+    skip: true
+  jax.lax.sort_key_val:
+    skip: true
+  jax.lax.with_sharding_constraint:
+    skip: true
