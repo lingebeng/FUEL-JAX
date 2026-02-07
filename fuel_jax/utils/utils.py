@@ -5,6 +5,7 @@ from typing import List, Dict
 import torch
 from loguru import logger
 import jax.numpy as jnp
+import yaml
 
 from ..config.config import ROOT_DIR
 
@@ -40,8 +41,6 @@ def ndarray2tensor(arr: np.ndarray, dtype=None):
 
 
 def tensor2ndarray(tensor: torch.tensor):
-    if tensor is None:
-        return None
     tensor = tensor.to(torch.float32)
     return np.array(tensor, dtype=np.float32)
 
@@ -54,8 +53,6 @@ def ndarray2Array(arr: np.ndarray, dtype=None):
 
 
 def Array2ndarray(Arr: jnp.array):
-    if Arr is None:
-        return None
     return np.array(Arr, dtype=np.float32)
 
 
@@ -82,6 +79,12 @@ def list_ops(test_id):
         if (child / f"test_{str(test_id).zfill(2)}.npz").exists():
             ops.append(child.name)
     return ops
+
+
+def load_yaml(yaml_path: Path) -> dict:
+    with yaml_path.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data
 
 
 if __name__ == "__main__":

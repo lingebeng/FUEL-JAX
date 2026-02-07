@@ -19,9 +19,8 @@ definitions:
       std: 1.0
     
     int_scalar: &strat_int_scalar
-      strategy: uniform_int
+      strategy: int
       range: [0, 100]
-      shape: []
     
     uniform_pos: &strat_pos  # (0, 10]
       strategy: uniform
