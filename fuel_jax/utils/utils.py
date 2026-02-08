@@ -5,6 +5,7 @@ from typing import List, Dict
 import torch
 from loguru import logger
 import jax.numpy as jnp
+import jax
 import yaml
 
 from ..config.config import ROOT_DIR
@@ -57,7 +58,7 @@ def Array2ndarray(Arr):
     return np.array(Arr, dtype=np.float32)
 
 
-def get_torch_device(device: str) -> str:
+def get_jax_device(device: str) -> str:
     if device == "gpu":
         if torch.cuda.is_available():
             return "cuda"
@@ -69,15 +70,24 @@ def get_torch_device(device: str) -> str:
     return device
 
 
-def list_ops(test_id):
-    input_root = ROOT_DIR / "input"
+def get_torch_device(device: str) -> str:
+    if device == "gpu":
+        if "cuda" in str(jax.devices()[0]):
+            return "cuda"
+        else:
+            logger.warning("CUDA not available, falling back to CPU.")
+            return "cpu"
+    return device
+
+
+def list_ops(test_id, input_dir=ROOT_DIR / "input") -> List[str]:
     ops = []
-    if not input_root.exists():
+    if not input_dir.exists():
         return ops
-    for child in sorted(input_root.iterdir()):
+    for child in sorted(input_dir.iterdir()):
         if not child.is_dir():
             continue
-        if (child / f"test_{str(test_id).zfill(2)}.npz").exists():
+        if (child / f"{str(test_id).zfill(2)}.npz").exists():
             ops.append(child.name)
     return ops
 
@@ -99,6 +109,18 @@ def parse_shape(value: str) -> tuple:
 
 def get_op_key(op_name: str) -> str:
     return op_name.split(".")[-1]
+
+
+def get_dir_list(dir_path: Path) -> List[str]:
+    if not dir_path.exists():
+        return []
+    return sorted([child.name for child in dir_path.iterdir() if child.is_dir()])
+
+
+def get_file_list(dir_path: Path) -> List[str]:
+    if not dir_path.exists():
+        return []
+    return sorted([child.name for child in dir_path.iterdir() if child.is_file()])
 
 
 if __name__ == "__main__":

@@ -6,7 +6,14 @@ import numpy as np
 from pathlib import Path
 from loguru import logger
 from ..config.config import PRECISION_MAP, ROOT_DIR
-from ..utils.utils import save_npz, load_npz, ndarray2Array, Array2ndarray, get_op_key
+from ..utils.utils import (
+    save_npz,
+    load_npz,
+    ndarray2Array,
+    Array2ndarray,
+    get_op_key,
+    get_jax_device,
+)
 
 
 def main(
@@ -24,11 +31,7 @@ def main(
 
     if not output_file:
         output_file = (
-            ROOT_DIR
-            / "output"
-            / get_op_key(op_name)
-            / precision
-            / f"out_jax_{device}.npz"
+            ROOT_DIR / "output" / get_op_key(op_name) / precision / f"jax_{device}.npz"
         )
 
     # Load input data
@@ -36,12 +39,12 @@ def main(
     # Convert input data to JAX array with specified precision
     dtype_str = PRECISION_MAP[precision]["jax"]
 
-    target_device = jax.devices(device)[0]
+    device = jax.devices(get_jax_device(device=device))[0]
 
     for k, v in inp.items():
         if isinstance(v, np.ndarray):
             inp[k] = jax.device_put(
-                ndarray2Array(v, dtype=eval(dtype_str)), device=target_device
+                ndarray2Array(v, dtype=eval(dtype_str)), device=device
             )
 
     # Define the JAX function to compute absolute values

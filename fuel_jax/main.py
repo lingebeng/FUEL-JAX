@@ -3,8 +3,8 @@ import typer
 from loguru import logger
 
 from .config.config import PRECISION_MAP, ROOT_DIR
-from .difftesting.check import check
-from .utils.utils import list_ops, save_npz, parse_shape, get_op_key
+from .difftesting.validate import _validate
+from .utils.utils import list_ops, save_npz, parse_shape, get_op_key, get_dir_list
 from .difftesting.exec import _exec
 from .generator.generate import Generator
 
@@ -48,39 +48,44 @@ def gen(
 
 
 @app.command()
-def run() -> None:
-    test_id = 0
-    ops = list_ops(test_id=test_id)
-    precisions = list(PRECISION_MAP.keys())
-    device = "cpu"
-    mode = "compiler"
+def exec(
+    op_name: str = typer.Option(..., help="Operator name to execute"),
+    device: str = typer.Option("cpu", help="Device to run on (cpu, gpu, tpu)"),
+    mode: str = typer.Option("compiler", help="Execution mode (eager or compiler)"),
+    test_id: int = typer.Option(0, help="Test ID to execute"),
+) -> None:
+    ops = list_ops(test_id)
+    if op_name != "all":
+        if op_name not in ops:
+            logger.error(
+                f"Operator '{op_name}' not found for test ID {test_id}. Available ops: {ops}"
+            )
+            return
+        ops = [op_name]
+    precisions = PRECISION_MAP.keys()
 
-    log_file = ROOT_DIR / "output" / f"log_{str(test_id).zfill(2)}.log"
-    log_file.parent.mkdir(parents=True, exist_ok=True)
-
-    summary = []
     for op in ops:
         for precision in precisions:
             _exec(op, "jax", precision, device, mode, test_id)
-            _exec(op, "torch", precision, device, mode, test_id)
-    for op in ops:
-        for precision in precisions:
-            result = check(op, precision, test_id)
-            summary.append(
-                {
-                    "op": op,
-                    "precision": precision,
-                    "status": result.get("status"),
-                    "max_diff": result.get("max_diff"),
-                }
-            )
+            if device != "tpu":
+                _exec(op, "torch", precision, device, mode, test_id)
 
-    log_lines = ["Summary:"]
-    for item in summary:
-        line = f"{item['op']}-{item['precision']}-{item['status']}-{item['max_diff']}\n"
-        log_lines.append(line)
-        logger.info(line)
-    log_file.write_text("\n".join(log_lines))
+
+@app.command()
+def validate(
+    op_name: str = typer.Option(..., help="Operator name to execute"),
+) -> None:
+    output_dirs = []
+    if op_name == "all":
+        for output_dir in get_dir_list(ROOT_DIR / "output"):
+            output_dirs.append(ROOT_DIR / "output" / output_dir)
+    else:
+        output_dirs = [ROOT_DIR / "output" / op_name]
+
+    for output_dir in output_dirs:
+        logger.info(f"Validating outputs in {output_dir}")
+        result = _validate(output_dir)
+        logger.info(f"Final check result for {output_dir.parent.name}: {result}")
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ def main(
             / "output"
             / get_op_key(op_name)
             / precision
-            / f"out_torch_{device}.npz"
+            / f"torch_{device}.npz"
         )
     # Load input data
     inp = load_npz(input_file)
