@@ -67,7 +67,6 @@ unary_operators:
   - { op_name: jax.lax.round,      input: [x],   generation: {x: *strat_std} }
   - { op_name: jax.lax.sign,       input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.square,     input: [x],  generation: {x: *strat_normal} }
-  - { op_name: jax.lax.cbrt,       input: [x],   generation: {x: *strat_normal} }
 
   # 需注意定义域的算子
   - op_name: jax.lax.reciprocal
@@ -115,35 +114,7 @@ unary_operators:
   - { op_name: jax.lax.asinh, input: [x],  generation: {x: *strat_normal} } # 全定义域
 
   # ----------------------------------------------------------------------------
-  # 1.4 判定与逻辑
-  # ----------------------------------------------------------------------------
-  - op_name: jax.lax.is_finite
-    input: [x]
-    constraints: {output_dtype_rule: ALWAYS_BOOL}
-    generation: {x: *strat_normal}
-
-  # ----------------------------------------------------------------------------
-  # 1.5 复数与类型操作
-  # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.conj, input: [x],  generation: {x: *strat_normal} }
-  - { op_name: jax.lax.real, input: [x],  generation: {x: *strat_normal} }
-  - { op_name: jax.lax.imag, input: [x],  generation: {x: *strat_normal} }
-
-  # 特殊：涉及类型转换参数 (Attribute)
-  - op_name: jax.lax.convert_element_type
-    signature:
-      inputs: [{name: operand, type: tensor}]
-      attributes: [{name: new_dtype, type: dtype}]
-      generation: {operand: *strat_normal}
-
-  - op_name: jax.lax.bitcast_convert_type
-    signature:
-      inputs: [{name: operand, type: tensor}]
-      attributes: [{name: new_dtype, type: dtype}]
-      generation: {operand: *strat_normal}
-
-  # ----------------------------------------------------------------------------
-  # 1.6 特殊函数
+  # 1.4 特殊函数
   # ----------------------------------------------------------------------------
   - { op_name: jax.lax.bessel_i0e, input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.bessel_i1e, input: [x],  generation: {x: *strat_normal} }

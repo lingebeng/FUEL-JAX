@@ -1,7 +1,7 @@
 from pathlib import Path
 import csv
 import numpy as np
-from typing import List, Dict
+from typing import Any, Callable, Callable, List, Dict
 import torch
 from loguru import logger
 import jax.numpy as jnp
@@ -58,7 +58,7 @@ def Array2ndarray(Arr):
     return np.array(Arr, dtype=np.float32)
 
 
-def get_jax_device(device: str) -> str:
+def get_torch_device(device: str) -> str:
     if device == "gpu":
         if torch.cuda.is_available():
             return "cuda"
@@ -67,17 +67,17 @@ def get_jax_device(device: str) -> str:
         else:
             logger.warning("GPU/MPS not available, falling back to CPU.")
             return "cpu"
-    return device
+    return "cpu"
 
 
-def get_torch_device(device: str) -> str:
+def get_jax_device(device: str) -> str:
     if device == "gpu":
         if "cuda" in str(jax.devices()[0]):
             return "cuda"
         else:
             logger.warning("CUDA not available, falling back to CPU.")
             return "cpu"
-    return device
+    return "cpu"
 
 
 def list_ops(test_id, input_dir=ROOT_DIR / "input") -> List[str]:
@@ -107,10 +107,6 @@ def parse_shape(value: str) -> tuple:
     return tuple(int(x) for x in text.split(",") if x.strip())
 
 
-def get_op_key(op_name: str) -> str:
-    return op_name.split(".")[-1]
-
-
 def get_dir_list(dir_path: Path) -> List[str]:
     if not dir_path.exists():
         return []
@@ -121,6 +117,25 @@ def get_file_list(dir_path: Path) -> List[str]:
     if not dir_path.exists():
         return []
     return sorted([child.name for child in dir_path.iterdir() if child.is_file()])
+
+
+# Resolve function from full op name (e.g. jax.lax.abs)
+def _resolve_dotted(obj, dotted: str) -> Callable[..., Any] | Any:
+    for part in dotted.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
+AX2TORCH_MAP: Dict[str, str] | None = None
+
+
+def load_jax2torch_map(
+    map_path: Path = ROOT_DIR / "dataset" / "jax2torch_map.csv",
+) -> Dict[str, str]:
+    mapping: Dict[str, str] = {}
+    for row in read_csv(map_path):
+        mapping[row["jax"]] = row["pytorch"]
+    return mapping
 
 
 if __name__ == "__main__":

@@ -1,13 +1,14 @@
 import subprocess as sp
+import sys
 from loguru import logger
 from ..config.config import ROOT_DIR
 
 
-def _exec(op_name, framework, precision, device, mode="eager", test_id=0):
-    input_file = ROOT_DIR / "input" / op_name / f"{str(test_id).zfill(2)}.npz"
+def _exec(op, op_name, framework, precision, device, mode="eager", test_id=0):
+    input_file = ROOT_DIR / "input" / op / f"{str(test_id).zfill(2)}.npz"
     module = f"fuel_jax.script.{framework}_script"
     cmd = [
-        "python",
+        sys.executable,
         "-m",
         module,
         "--op-name",

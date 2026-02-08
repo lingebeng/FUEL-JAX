@@ -1,4 +1,5 @@
 jax,pytorch,type,remark,torch 精度支持
+jax.lax.cbrt,"torch.pow(x,1/3)",elementwise,立方根,
 jax.lax.broadcast_to_rank,None,array,广播到指定秩,
 jax.lax.broadcasted_iota,None,array,广播的 iota 序列,
 jax.lax.dynamic_slice,None,array,动态切片,

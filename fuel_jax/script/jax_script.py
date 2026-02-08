@@ -1,4 +1,3 @@
-import jax.lax as lax
 import jax
 import jax.numpy as jnp  # noqa: F401
 import typer
@@ -11,8 +10,8 @@ from ..utils.utils import (
     load_npz,
     ndarray2Array,
     Array2ndarray,
-    get_op_key,
     get_jax_device,
+    _resolve_dotted,
 )
 
 
@@ -27,12 +26,10 @@ def main(
     compile_flag: bool = typer.Option(False, help="Enable JIT compilation(xla or not)"),
 ):
     if not input_file:
-        input_file = ROOT_DIR / "input" / get_op_key(op_name) / "00.npz"
+        input_file = ROOT_DIR / "input" / op_name / "00.npz"
 
     if not output_file:
-        output_file = (
-            ROOT_DIR / "output" / get_op_key(op_name) / precision / f"jax_{device}.npz"
-        )
+        output_file = ROOT_DIR / "output" / op_name / precision / f"jax_{device}.npz"
 
     # Load input data
     inp = load_npz(input_file)
@@ -47,8 +44,8 @@ def main(
                 ndarray2Array(v, dtype=eval(dtype_str)), device=device
             )
 
-    # Define the JAX function to compute absolute values
-    fn = getattr(lax, op_name)
+    op_suffix = op_name.split(".", 1)[1]
+    fn = _resolve_dotted(jax, op_suffix)
 
     try:
         save_kwargs = {}
