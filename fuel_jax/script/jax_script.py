@@ -16,6 +16,9 @@ from ..utils.utils import (
 
 
 def main(
+    jax_op: str = typer.Option(
+        None, help="Operator name (mapped to torch via jax2torch_map.csv)"
+    ),
     op_name: str = typer.Option(..., help="JAX op name"),
     input_file: Path = typer.Option(None, help="Input file path"),
     output_file: Path = typer.Option(None, help="Output file path"),
@@ -36,12 +39,12 @@ def main(
     # Convert input data to JAX array with specified precision
     dtype_str = PRECISION_MAP[precision]["jax"]
 
-    device = jax.devices(get_jax_device(device=device))[0]
+    target_device = jax.devices(get_jax_device(device=device))[0]
 
     for k, v in inp.items():
         if isinstance(v, np.ndarray):
             inp[k] = jax.device_put(
-                ndarray2Array(v, dtype=eval(dtype_str)), device=device
+                ndarray2Array(v, dtype=eval(dtype_str)), device=target_device
             )
 
     op_suffix = op_name.split(".", 1)[1]

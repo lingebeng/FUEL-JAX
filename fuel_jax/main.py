@@ -2,11 +2,25 @@ from pathlib import Path
 import typer
 from loguru import logger
 
-from .config.config import PRECISION_MAP, ROOT_DIR
+from .config.config import (
+    PRECISION_MAP,
+    ROOT_DIR,
+)
 from .difftesting.validate import _validate
-from .utils.utils import save_npz, parse_shape, get_dir_list, load_jax2torch_map
+from .utils.utils import (
+    save_npz,
+    parse_shape,
+    get_dir_list,
+    load_jax2torch_map,
+    RECORD,
+    list_ops,
+)
 from .difftesting.exec import _exec
 from .generator.generate import Generator
+from .config.config import (
+    ExecErrorLogger,
+    ValidateInfoLogger,
+)
 
 app = typer.Typer()
 
@@ -58,18 +72,25 @@ def exec(
     mode: str = typer.Option("compiler", help="Execution mode (eager or compiler)"),
     test_id: int = typer.Option(0, help="Test ID to execute"),
 ) -> None:
-    gen = Generator(seed=0)
+    RECORD(
+        ExecErrorLogger,
+        f"-------------------------- Starting execution for {op_name} --------------------------",
+        mode="w",
+    )
     if op_name == "all":
-        ops = [entry["op_name"] for entry in gen.rule.get("unary_operators", [])] + [
-            entry["op_name"] for entry in gen.rule.get("binary_operators", [])
-        ]
+        ops = list_ops(test_id=test_id)
     else:
         ops = [op_name]
     precisions = PRECISION_MAP.keys()
 
     for op in ops:
+        RECORD(
+            ExecErrorLogger,
+            f"-------------------------- Executing op: {op} --------------------------",
+        )
         input_file = ROOT_DIR / "input" / op / f"{str(test_id).zfill(2)}.npz"
         if not input_file.exists():
+            RECORD(ExecErrorLogger, f"Missing input for {op}: {input_file}\n")
             logger.warning(f"Missing input for {op}: {input_file}")
             continue
         for precision in precisions:
@@ -83,6 +104,11 @@ def exec(
 def validate(
     op_name: str = typer.Option(..., help="JAX op name (jax.lax.xxx) or 'all'"),
 ) -> None:
+    RECORD(
+        ValidateInfoLogger,
+        f"-------------------------- Starting validation for {op_name} --------------------------",
+        mode="w",
+    )
     output_dirs = []
     if op_name == "all":
         for output_dir in get_dir_list(ROOT_DIR / "output"):
@@ -91,7 +117,10 @@ def validate(
         output_dirs = [ROOT_DIR / "output" / op_name]
 
     for output_dir in output_dirs:
-        logger.info(f"Validating outputs in {output_dir}")
+        RECORD(
+            ValidateInfoLogger,
+            f"\n-------------------------- Starting validation for {output_dir.name} --------------------------\n",
+        )
         result = _validate(output_dir)
         logger.info(f"Final check result for {output_dir.parent.name}: {result}")
 

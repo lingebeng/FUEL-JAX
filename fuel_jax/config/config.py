@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 ROOT_DIR = Path(__file__).parent.parent.parent.resolve()
 
 
@@ -17,3 +18,7 @@ TOLERANCE: dict[str, dict[str, float]] = {
     "FP8_E4M3": {"atol": 1e-1, "rtol": 1e-1},
     "FP8_E5M2": {"atol": 1e-1, "rtol": 1e-1},
 }
+
+
+ExecErrorLogger = ROOT_DIR / "EXEC.log"
+ValidateInfoLogger = ROOT_DIR / "VALIDATE.log"

@@ -1,7 +1,7 @@
 from pathlib import Path
 import csv
 import numpy as np
-from typing import Any, Callable, Callable, List, Dict
+from typing import Any, Callable, List, Dict
 import torch
 from loguru import logger
 import jax.numpy as jnp
@@ -136,6 +136,11 @@ def load_jax2torch_map(
     for row in read_csv(map_path):
         mapping[row["jax"]] = row["pytorch"]
     return mapping
+
+
+def RECORD(filename, content, mode="a"):
+    with open(filename, mode=mode) as f:
+        f.write(content + "\n")
 
 
 if __name__ == "__main__":

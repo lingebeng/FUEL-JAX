@@ -15,6 +15,9 @@ from ..utils.utils import (
 
 
 def main(
+    jax_op: str = typer.Option(
+        None, help="Operator name (mapped to torch via jax2torch_map.csv)"
+    ),
     op_name: str = typer.Option(
         ..., help="PyTorch op name (mapped to torch via jax2torch_map.csv)"
     ),
@@ -28,20 +31,22 @@ def main(
         False, help="Enable Inductor compilation(inductor or not)"
     ),
 ):
+    if jax_op is None:
+        jax_op = op_name
     if not input_file:
-        input_file = ROOT_DIR / "input" / op_name / "00.npz"
+        input_file = ROOT_DIR / "input" / jax_op / "00.npz"
     if not output_file:
-        output_file = ROOT_DIR / "output" / op_name / precision / f"torch_{device}.npz"
+        output_file = ROOT_DIR / "output" / jax_op / precision / f"torch_{device}.npz"
     # Load input data
     inp = load_npz(input_file)
     # Convert input data to JAX array with specified precision
     dtype_str = PRECISION_MAP[precision]["torch"]
 
-    device = get_torch_device(device=device)
+    target_device = get_torch_device(device=device)
     inp_lst = []
-    for v in sorted(inp.values()):
+    for v in inp.values():
         if isinstance(v, np.ndarray):
-            v = ndarray2tensor(v, dtype=eval(dtype_str)).to(device)
+            v = ndarray2tensor(v, dtype=eval(dtype_str)).to(target_device)
         inp_lst.append(v)
 
     op_suffix = op_name.split(".", 1)[1]
