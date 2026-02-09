@@ -60,12 +60,9 @@ unary_operators:
   # ----------------------------------------------------------------------------
   # 1.1 基础数学与代数运算
   # ----------------------------------------------------------------------------
-  - { op_name: jax.lax.abs,        input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.ceil,       input: [x],   generation: {x: *strat_std} }
   - { op_name: jax.lax.floor,      input: [x],   generation: {x: *strat_std} }
-  - { op_name: jax.lax.neg,        input: [x],  generation: {x: *strat_normal} }
   - { op_name: jax.lax.round,      input: [x],   generation: {x: *strat_std} }
-  - { op_name: jax.lax.sign,       input: [x],  generation: {x: *strat_std} }
   - { op_name: jax.lax.square,     input: [x],  generation: {x: *strat_normal} }
 
   # 需注意定义域的算子
@@ -168,11 +165,6 @@ binary_operators:
   - op_name: jax.lax.atan2
     input: [x, y]
     generation: {x: *strat_std, y: *strat_std}
-
-  - op_name: jax.lax.complex
-    input: [x, y]
-    #  输入实部虚部为浮点
-    generation: {x: *strat_normal, y: *strat_normal}
 
   - op_name: jax.lax.nextafter
     input: [x1, x2]
