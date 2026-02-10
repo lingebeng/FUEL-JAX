@@ -1,4 +1,4 @@
-from ..config.config import ROOT_DIR, TOLERANCE
+from ..config.config import ROOT_DIR, TOLERANCE, DIFF_ORACLE_THRESHOLDS
 from ..utils.utils import load_npz, get_dir_list, get_file_list, RECORD
 from itertools import combinations as comb
 from loguru import logger
@@ -9,26 +9,42 @@ from pathlib import Path
 from ..config.config import (
     ValidateInfoLogger,
 )
+from .oracle import Oracle, evaluate_diff, format_metrics, oracle_rank
 
 
-def testing(x: np.ndarray, y: np.ndarray, atol: float, rtol: float):
+def testing(
+    x: np.ndarray,
+    y: np.ndarray,
+    *,
+    precision: str,
+    atol: float,
+    rtol: float,
+) -> Oracle:
     try:
-        is_close = np.allclose(x, y, atol=atol, rtol=rtol, equal_nan=True)
-        diff = np.abs(x - y)
-        max_diff = np.nanmax(diff) if not np.isnan(diff).all() else 0.0
-        if is_close:
-            status = "Consistent"
-            logger.success("Consistent")
-            logger.success(f"max_diff:{max_diff}")
+        result = evaluate_diff(
+            x,
+            y,
+            atol=atol,
+            rtol=rtol,
+            criteria=DIFF_ORACLE_THRESHOLDS[precision],
+        )
+        status = result.oracle.name
+        metrics_str = format_metrics(result.metrics)
+
+        if result.oracle == Oracle.PASS:
+            logger.success(status)
+        elif result.oracle == Oracle.WARN:
+            logger.warning(status)
         else:
-            status = "Inconsistent"
-            logger.error("Inconsistent")
-            logger.error(f"max_diff:{max_diff}")
+            logger.error(status)
+        logger.info(result.message)
+        logger.info(metrics_str)
 
         RECORD(
             ValidateInfoLogger,
-            f"status: {status}, max_diff: {max_diff}\n",
+            f"status: {status}, reason: {result.message}, metrics: {metrics_str}\n",
         )
+        return result.oracle
 
     except Exception as e:
         RECORD(
@@ -36,18 +52,36 @@ def testing(x: np.ndarray, y: np.ndarray, atol: float, rtol: float):
             f"Error during testing: {str(e)}\n",
         )
         logger.error(e)
+        return Oracle.FAIL
 
 
 def _validate(output_dir: Path):
     logger.info(f"Validating outputs in {output_dir}")
+    overall_result = Oracle.PASS
     dirs = get_dir_list(output_dir)
     for dir_precision in dirs:
+        if dir_precision not in TOLERANCE:
+            RECORD(
+                ValidateInfoLogger,
+                f"Unknown precision {dir_precision}, skipping.\n",
+            )
+            logger.warning(f"Unknown precision {dir_precision}, skipping.")
+            continue
+        if dir_precision not in DIFF_ORACLE_THRESHOLDS:
+            RECORD(
+                ValidateInfoLogger,
+                f"Missing oracle thresholds for {dir_precision}, skipping.\n",
+            )
+            logger.warning(f"Missing oracle thresholds for {dir_precision}, skipping.")
+            continue
+
         logger.info(f"Validating precision: {dir_precision}")
         RECORD(
             ValidateInfoLogger,
             f"\n-------------------------- Validating precision: {dir_precision} --------------------------\n",
         )
         atol, rtol = TOLERANCE[dir_precision]["atol"], TOLERANCE[dir_precision]["rtol"]
+        precision_result = Oracle.PASS
         files = get_file_list(output_dir / dir_precision)
         outputs = {}
         for file in files:
@@ -69,7 +103,26 @@ def _validate(output_dir: Path):
                 ValidateInfoLogger,
                 f"Difftesting between     【{x}】      and     【{y}】     ",
             )
-            testing(outputs[x], outputs[y], atol=atol, rtol=rtol)
+            pair_result = testing(
+                outputs[x],
+                outputs[y],
+                precision=dir_precision,
+                atol=atol,
+                rtol=rtol,
+            )
+            if oracle_rank(pair_result) > oracle_rank(precision_result):
+                precision_result = pair_result
+
+        RECORD(
+            ValidateInfoLogger,
+            f"precision_result: {dir_precision} -> {precision_result.name}\n",
+        )
+        logger.info(f"{dir_precision} summary: {precision_result.name}")
+        if oracle_rank(precision_result) > oracle_rank(overall_result):
+            overall_result = precision_result
+
+    RECORD(ValidateInfoLogger, f"overall_result: {overall_result.name}\n")
+    return overall_result.name
 
 
 if __name__ == "__main__":

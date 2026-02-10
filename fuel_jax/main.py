@@ -122,7 +122,7 @@ def validate(
             f"\n-------------------------- Starting validation for {output_dir.name} --------------------------\n",
         )
         result = _validate(output_dir)
-        logger.info(f"Final check result for {output_dir.parent.name}: {result}")
+        logger.info(f"Final check result for {output_dir.name}: {result}")
 
 
 if __name__ == "__main__":
