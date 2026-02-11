@@ -1,6 +1,6 @@
 # FUEL-JAX
 
-面向 JAX / PyTorch 的算子差分测试小框架。当前主要覆盖 `dataset/jax_rules.yaml` 里的一元 / 二元算子输入生成与执行对比。
+面向 JAX / PyTorch 的底层算子差分测试小框架。
 
 ![framework](assets/image.png)
 
@@ -18,7 +18,7 @@ uv sync
 
 ```bash
 # 单个算子
-.venv/bin/python -m fuel_jax.main gen --op-name jax.lax.pow --shape 2,3 --seed 0
+.venv/bin/python -m fuel_jax.main gen --op-name jax.lax.sin --shape 2,3 --seed 0
 
 # 生成全部规则中的算子
 .venv/bin/python -m fuel_jax.main gen --op-name all --seed 0
@@ -30,18 +30,18 @@ uv sync
 
 ### 3) 执行对比
 
-> `exec` 使用 **完整 JAX 名称**（如 `jax.lax.abs`）。
+> `exec` 使用 **完整 JAX 名称**（如 `jax.lax.sin`）。
 
 ```bash
 # 运行单个算子
-.venv/bin/python -m fuel_jax.main exec --op-name jax.lax.abs --device gpu --mode compiler --test-id 0
+.venv/bin/python -m fuel_jax.main exec --op-name jax.lax.sin --device gpu --mode compiler --test-id 0
 
 # 执行全部
 .venv/bin/python -m fuel_jax.main exec --op-name all --device gpu --mode compiler --test-id 0
 ```
 
 输出路径默认：
-```
+```bash
 output/<op_name>/<precision>/jax_<device>.npz
 output/<op_name>/<precision>/torch_<device>.npz
 ```
@@ -51,6 +51,12 @@ output/<op_name>/<precision>/torch_<device>.npz
 ```bash
 .venv/bin/python -m fuel_jax.main validate --op-name jax.lax.abs
 .venv/bin/python -m fuel_jax.main validate --op-name all
+```
+### 5) 日志查询
+
+```bash
+EXEC.log 执行日志
+VALIDATE.log 验证日志
 ```
 
 ## 2. 规则文件（输入生成）
