@@ -6,9 +6,9 @@ import numpy as np
 
 
 class Oracle(Enum):
-    PASS = auto()
-    WARN = auto()
-    FAIL = auto()
+    PASS = auto()  # 通过✅
+    WARN = auto()  # 警告⚠️
+    FAIL = auto()  # 失败☹️
 
 
 ORACLE_RANK: dict[Oracle, int] = {
@@ -36,7 +36,8 @@ def format_metrics(metrics: Mapping[str, float | int]) -> str:
             parts.append(f"{key}={value}")
         else:
             parts.append(f"{key}={value:.6g}")
-    return ", ".join(parts)
+
+    return "\n".join(parts)
 
 
 def _safe_percentile(values: np.ndarray, q: float) -> float:
@@ -45,19 +46,15 @@ def _safe_percentile(values: np.ndarray, q: float) -> float:
     return float(np.percentile(values, q))
 
 
-def _ulp_distance_float32(a: np.ndarray, b: np.ndarray) -> np.ndarray:
-    a32 = np.asarray(a, dtype=np.float32)
-    b32 = np.asarray(b, dtype=np.float32)
-
-    # Collapse +0.0 and -0.0 into the same bucket before viewing bits.
-    a32 = np.where(a32 == 0.0, np.float32(0.0), a32)
-    b32 = np.where(b32 == 0.0, np.float32(0.0), b32)
-
-    ai = a32.view(np.int32).astype(np.int64)
-    bi = b32.view(np.int32).astype(np.int64)
-    ai = np.where(ai < 0, 0x80000000 - ai, ai)
-    bi = np.where(bi < 0, 0x80000000 - bi, bi)
-    return np.abs(ai - bi)
+def _cosine_sim(x: np.ndarray, y: np.ndarray) -> float:
+    x_norm = float(np.linalg.norm(x))
+    y_norm = float(np.linalg.norm(y))
+    if x_norm == 0.0 and y_norm == 0.0:
+        return 1.0
+    if x_norm == 0.0 or y_norm == 0.0:
+        return 0.0
+    sim = float(np.dot(x, y) / (x_norm * y_norm))
+    return float(np.clip(sim, -1.0, 1.0))
 
 
 def _empty_metrics(total_count: int) -> dict[str, float | int]:
@@ -66,14 +63,11 @@ def _empty_metrics(total_count: int) -> dict[str, float | int]:
         "compared_count": 0,
         "max_abs_diff": 0.0,
         "p99_abs_diff": 0.0,
-        "p90_abs_diff": 0.0,
-        "max_ulp_diff": 0.0,
-        "p99_ulp_diff": 0.0,
-        "cosine_distance": 0.0,
-        "max_ratio_diff": 0.0,
-        "p99_ratio_diff": 0.0,
-        "p90_ratio_diff": 0.0,
-        "close_mismatch_count": 0,
+        "mean_abs_diff": 0.0,
+        "max_rel_diff": 0.0,
+        "p99_rel_diff": 0.0,
+        "cosine_sim": 1.0,
+        "close_mismatch_ratio": 0.0,
         "nonfinite_mismatch_ratio": 0.0,
     }
 
@@ -84,8 +78,12 @@ def _exceeded(
     exceeded: list[str] = []
     for key, threshold in thresholds.items():
         value = float(metrics.get(key, 0.0))
-        if value > threshold:
-            exceeded.append(f"{key}={value:.6g}>{threshold:.6g}")
+        if key == "cosine_sim":
+            if value < float(threshold):
+                exceeded.append(f"{key}={value:.6g}<{float(threshold):.6g}")
+            continue
+        if value > float(threshold):
+            exceeded.append(f"{key}={value:.6g}>{float(threshold):.6g}")
     return exceeded
 
 
@@ -139,25 +137,17 @@ def evaluate_diff(
 
     if xf.size > 0:
         abs_diff = np.abs(xf - yf)
-        ratio_scale = atol + rtol * np.maximum(np.abs(xf), np.abs(yf))
-        ratio_scale = np.where(
-            ratio_scale > 0.0, ratio_scale, np.finfo(np.float64).tiny
-        )
-        ratio_diff = abs_diff / ratio_scale
-
-        ulp_diff = _ulp_distance_float32(xf, yf).astype(np.float64)
+        rel_scale = np.maximum(np.maximum(np.abs(xf), np.abs(yf)), float(atol))
+        rel_diff = abs_diff / rel_scale
         close_mask = np.isclose(xf, yf, atol=atol, rtol=rtol, equal_nan=True)
 
         metrics["max_abs_diff"] = float(np.max(abs_diff))
         metrics["p99_abs_diff"] = _safe_percentile(abs_diff, 99.0)
-        metrics["p90_abs_diff"] = _safe_percentile(abs_diff, 90.0)
-        metrics["max_ulp_diff"] = float(np.max(ulp_diff))
-        metrics["p99_ulp_diff"] = _safe_percentile(ulp_diff, 99.0)
-        metrics["cosine_distance"] = _cosine_distance(xf, yf)
-        metrics["max_ratio_diff"] = float(np.max(ratio_diff))
-        metrics["p99_ratio_diff"] = _safe_percentile(ratio_diff, 99.0)
-        metrics["p90_ratio_diff"] = _safe_percentile(ratio_diff, 90.0)
-        metrics["close_mismatch_count"] = int(np.count_nonzero(~close_mask))
+        metrics["mean_abs_diff"] = float(np.mean(abs_diff))
+        metrics["max_rel_diff"] = float(np.max(rel_diff))
+        metrics["p99_rel_diff"] = _safe_percentile(rel_diff, 99.0)
+        metrics["cosine_sim"] = _cosine_sim(xf, yf)
+        metrics["close_mismatch_ratio"] = float(np.mean(~close_mask))
 
     pass_exceeded = _exceeded(metrics, criteria["pass"])
     warn_exceeded = _exceeded(metrics, criteria["warn"])
@@ -180,15 +170,3 @@ def evaluate_diff(
         message="metrics exceed WARN thresholds: " + "; ".join(warn_exceeded[:3]),
         metrics=metrics,
     )
-
-
-def _cosine_distance(x: np.ndarray, y: np.ndarray) -> float:
-    x_norm = float(np.linalg.norm(x))
-    y_norm = float(np.linalg.norm(y))
-    if x_norm == 0.0 and y_norm == 0.0:
-        return 0.0
-    if x_norm == 0.0 or y_norm == 0.0:
-        return 1.0
-    cosine_sim = float(np.dot(x, y) / (x_norm * y_norm))
-    cosine_sim = float(np.clip(cosine_sim, -1.0, 1.0))
-    return 1.0 - cosine_sim

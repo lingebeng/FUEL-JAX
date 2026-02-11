@@ -42,7 +42,7 @@ def testing(
 
         RECORD(
             ValidateInfoLogger,
-            f"status: {status}, reason: {result.message}, metrics: {metrics_str}\n",
+            f"status: {status}\nreason: {result.message}\nmetrics: {metrics_str}\n",
         )
         return result.oracle
 
@@ -57,6 +57,7 @@ def testing(
 
 def _validate(output_dir: Path):
     logger.info(f"Validating outputs in {output_dir}")
+    op_name = output_dir.name
     overall_result = Oracle.PASS
     dirs = get_dir_list(output_dir)
     for dir_precision in dirs:
@@ -98,10 +99,12 @@ def _validate(output_dir: Path):
             continue
 
         for x, y in comb(k_output, 2):
-            logger.info(f"Difftesting between {x} and {y}")
+            logger.info(
+                f"【{op_name}】【{dir_precision}】: Difftesting between {x} and {y}"
+            )
             RECORD(
                 ValidateInfoLogger,
-                f"Difftesting between     【{x}】      and     【{y}】     ",
+                f"{'-' * 100}\n【{op_name}】【{dir_precision}】:Difftesting between 【{x}】  and  【{y}】  ",
             )
             pair_result = testing(
                 outputs[x],
