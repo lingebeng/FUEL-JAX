@@ -1,5 +1,5 @@
-jax,pytorch,type,remark,torch 精度支持
-jax.lax.cbrt,"torch.pow(x,1/3)",elementwise,立方根,
+jax,pytorch,type,remark,reason
+jax.lax.cbrt,"torch.pow(x,1/3)",elementwise,立方根,可间接替代
 jax.lax.clz,None,elementwise,前导零计数,
 jax.lax.igamma_grad_a,None,elementwise,igamma 对参数 a 的梯度,
 jax.lax.population_count,None,elementwise,置位计数,
@@ -76,3 +76,16 @@ jax.lax.stop_gradient,None,other,Custom gradient operators,
 jax.lax.switch,None,other,多分支控制流 primitive,
 jax.lax.while_loop,None,other,while 循环 primitive,
 jax.lax.with_sharding_constraint,None,other,分片约束,
+
+
+jax.lax.rng_uniform,None,other,均匀随机数,不同设备、框架使用伪随机数生成算法
+jax.lax.getattr,getattr,other,属性读取,
+jax.lax.pbroadcast,torch.distributed.broadcast,other,跨设备广播,
+jax.lax.dtype,x.dtype,other,获取 dtype,
+jax.lax.gather,torch.ops.aten.gather.default,other,收集/索引,
+jax.lax.scatter,torch.ops.aten.scatter_.src,other,散射写入,
+jax.lax.scatter_add,torch.ops.aten.scatter_add_.default,other,散射加,
+jax.lax.scatter_max,torch.ops.aten.scatter_reduce_.two,other,散射最大,
+jax.lax.scatter_min,torch.ops.aten.scatter_reduce_.two,other,散射最小,
+jax.lax.scatter_mul,torch.ops.aten.scatter_reduce_.two,other,散射乘,
+jax.lax.create_token,torch.ops.aten._make_dep_token,other,创建依赖 token（内部接口）,

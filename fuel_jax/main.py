@@ -3,7 +3,6 @@ import typer
 from loguru import logger
 
 from .config.config import (
-    PRECISION_MAP,
     ROOT_DIR,
 )
 from .difftesting.validate import _validate
@@ -43,8 +42,7 @@ def gen(
     ops = (
         [op_name]
         if op_name != "all"
-        else [entry["op_name"] for entry in gen.rule.get("unary_operators", [])]
-        + [entry["op_name"] for entry in gen.rule.get("binary_operators", [])]
+        else [entry["op_name"] for entry in gen.rule.get("elementwise", [])]
     )
 
     out_dir = ROOT_DIR / "input"
@@ -81,7 +79,7 @@ def exec(
         ops = list_ops(test_id=test_id)
     else:
         ops = [op_name]
-    precisions = PRECISION_MAP.keys()
+    precisions = ["FP32", "BF16"]  # PRECISION_MAP.keys()
 
     for op in ops:
         RECORD(

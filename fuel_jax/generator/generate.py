@@ -24,10 +24,7 @@ class Generator:
 
     def _get_entry(self, op_name: str) -> dict:
 
-        for entry in self.rule.get("unary_operators", []):
-            if entry["op_name"] == op_name:
-                return entry
-        for entry in self.rule.get("binary_operators", []):
+        for entry in self.rule.get("elementwise", []):
             if entry["op_name"] == op_name:
                 return entry
         raise ValueError(f"Operator '{op_name}' not found in rules.")
