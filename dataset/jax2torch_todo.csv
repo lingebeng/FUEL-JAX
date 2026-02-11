@@ -89,3 +89,13 @@ jax.lax.scatter_max,torch.ops.aten.scatter_reduce_.two,other,散射最大,
 jax.lax.scatter_min,torch.ops.aten.scatter_reduce_.two,other,散射最小,
 jax.lax.scatter_mul,torch.ops.aten.scatter_reduce_.two,other,散射乘,
 jax.lax.create_token,torch.ops.aten._make_dep_token,other,创建依赖 token（内部接口）,
+
+
+jax.lax.betainc,None,elementwise,不完全贝塔函数,
+jax.lax.bitwise_and,torch.ops.aten.bitwise_and.Tensor,elementwise,按位与,位运算不支持浮点类型
+jax.lax.bitwise_not,torch.ops.aten.bitwise_not.default,elementwise,按位非,位运算不支持浮点类型
+jax.lax.bitwise_or,torch.ops.aten.bitwise_or.Tensor,elementwise,按位或,位运算不支持浮点类型
+jax.lax.bitwise_xor,torch.ops.aten.bitwise_xor.Tensor,elementwise,按位异或,位运算不支持浮点类型
+jax.lax.convert_element_type,torch.ops.prims.convert_element_type.default,elementwise,元素类型转换,类型转换没必要比较
+jax.lax.imag,torch.ops.aten.imag.default,elementwise,取虚部,只支持 subtypes of complexfloating
+jax.lax.real,torch.ops.aten.real.default,elementwise,取实部,只支持 subtypes of complexfloating

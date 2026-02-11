@@ -40,12 +40,19 @@ def main(
     dtype_str = PRECISION_MAP[precision]["jax"]
 
     target_device = jax.devices(get_jax_device(device=device))[0]
-
+    logger.info(inp)
     for k, v in inp.items():
-        if isinstance(v, np.ndarray):
-            inp[k] = jax.device_put(
+        logger.info(v.dtype)
+        if v.shape == ():
+            if v.dtype == np.float64 or op_name == "jax.lax.polygamma":
+                v = v.astype(eval(dtype_str))
+            else:
+                v = int(v)
+        else:
+            v = jax.device_put(
                 ndarray2Array(v, dtype=eval(dtype_str)), device=target_device
             )
+        inp[k] = v
 
     op_suffix = op_name.split(".", 1)[1]
     fn = _resolve_dotted(jax, op_suffix)

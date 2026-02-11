@@ -22,6 +22,10 @@ definitions:
       strategy: int
       range: [0, 100]
 
+    float_scalar: &strat_float_scalar
+      strategy: float
+      range: [-10.0, 10.0]
+
     uniform_pos: &strat_pos  # (0, 10]
       strategy: uniform
       range: [0.001, 10.0]
@@ -96,10 +100,6 @@ elementwise:
   - { op_name: jax.lax.acosh, input: [x], generation: {x: *strat_large_pos} }
   - { op_name: jax.lax.atanh, input: [x], generation: {x: *strat_unit} }
 
-
-
-
-
   - { op_name: jax.lax.bessel_i0e, input: [x], generation: {x: *strat_normal} }
   - { op_name: jax.lax.bessel_i1e, input: [x], generation: {x: *strat_normal} }
   - { op_name: jax.lax.erf,        input: [x], generation: {x: *strat_normal} }
@@ -145,29 +145,28 @@ elementwise:
     generation: {x: *strat_large_pos, q: *strat_pos}
 
   - op_name: jax.lax.polygamma
-    input: [n, x]
-    generation: {n: *strat_int_scalar, x: *strat_normal}
+    input: [m, x]
+    generation:
+      m:
+        <<: *strat_int_scalar
+        range: [1,5]
+      x: *strat_std
 
   - { op_name: jax.lax.abs, input: [x], generation: {x: *strat_std} }
-  - op_name: jax.lax.betainc
-    input: [a, b, x]
-    generation: {a: *strat_pos, b: *strat_pos, x: *strat_prob}
-
-  - { op_name: jax.lax.bitwise_and, input: [x, y], generation: {x: *strat_int_scalar, y: *strat_int_scalar} }
-  - { op_name: jax.lax.bitwise_not, input: [x], generation: {x: *strat_int_scalar} }
-  - { op_name: jax.lax.bitwise_or, input: [x, y], generation: {x: *strat_int_scalar, y: *strat_int_scalar} }
-  - { op_name: jax.lax.bitwise_xor, input: [x, y], generation: {x: *strat_int_scalar, y: *strat_int_scalar} }
 
   - op_name: jax.lax.clamp
-    input: [x, min_val, max_val]
+    input: [x, min, max]
     generation:
       x: *strat_std
-      min_val: {strategy: uniform, range: [-10.0, -0.1]}
-      max_val: {strategy: uniform, range: [0.1, 10.0]}
+      min:
+        <<: *strat_float_scalar
+        range: [-10.0, -0.1]
+      max:
+        <<: *strat_float_scalar
+        range: [0.1, 10.0]
 
   - { op_name: jax.lax.complex, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.conj, input: [x], generation: {x: *strat_normal} }
-  - { op_name: jax.lax.convert_element_type, input: [x], generation: {x: *strat_normal} }
 
   - { op_name: jax.lax.eq, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.ge, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
@@ -181,13 +180,11 @@ elementwise:
     input: [a, x]
     generation: {a: *strat_pos, x: *strat_pos}
 
-  - { op_name: jax.lax.imag, input: [x], generation: {x: *strat_normal} }
   - { op_name: jax.lax.is_finite, input: [x], generation: {x: *strat_std} }
   - { op_name: jax.lax.le, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.lt, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.ne, input: [x, y], generation: {x: *strat_normal, y: *strat_normal} }
   - { op_name: jax.lax.neg, input: [x], generation: {x: *strat_normal} }
-  - { op_name: jax.lax.real, input: [x], generation: {x: *strat_normal} }
   - { op_name: jax.lax.shift_left, input: [x, y], generation: {x: *strat_int_scalar, y: *strat_int_scalar} }
   - { op_name: jax.lax.shift_right_arithmetic, input: [x, y], generation: {x: *strat_int_scalar, y: *strat_int_scalar} }
   - { op_name: jax.lax.sign, input: [x], generation: {x: *strat_normal} }

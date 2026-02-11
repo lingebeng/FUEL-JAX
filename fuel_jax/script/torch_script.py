@@ -45,10 +45,17 @@ def main(
     target_device = get_torch_device(device=device)
     inp_lst = []
     for v in inp.values():
-        if isinstance(v, np.ndarray):
+        if v.shape == ():
+            if v.dtype == np.float64:
+                v = float(v)
+            else:
+                if "Tensor" in op_name:
+                    v = torch.tensor(v)
+                else:
+                    v = int(v)
+        else:
             v = ndarray2tensor(v, dtype=eval(dtype_str)).to(target_device)
         inp_lst.append(v)
-
     op_suffix = op_name.split(".", 1)[1]
     fn = _resolve_dotted(torch, op_suffix)
 

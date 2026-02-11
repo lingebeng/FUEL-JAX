@@ -50,7 +50,11 @@ class Generator:
 
         if strategy == "int":
             low, high = input_spec.get("range", [0, 100])
-            return int(self.rng.integers(int(low), int(high) + 1))
+            return self.rng.integers(int(low), int(high) + 1)
+
+        if strategy == "float":
+            low, high = input_spec.get("range", [-1.0, 1.0])
+            return self.rng.uniform(low=low, high=high)
 
         if strategy == "normal":
             mean = input_spec.get("mean", 0.0)
