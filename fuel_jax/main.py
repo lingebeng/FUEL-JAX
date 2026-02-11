@@ -2,9 +2,7 @@ from pathlib import Path
 import typer
 from loguru import logger
 
-from .config.config import (
-    ROOT_DIR,
-)
+from .config.config import ROOT_DIR, PRECISION_MAP
 from .difftesting.validate import _validate
 from .utils.utils import (
     save_npz,
@@ -79,7 +77,7 @@ def exec(
         ops = list_ops(test_id=test_id)
     else:
         ops = [op_name]
-    precisions = ["FP32", "BF16"]  # PRECISION_MAP.keys()
+    precisions = PRECISION_MAP.keys()
 
     for op in ops:
         RECORD(

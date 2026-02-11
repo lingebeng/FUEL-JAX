@@ -1,122 +1,122 @@
-jax,pytorch,type,remark,torch 精度支持,jax 精度支持
-jax.lax.abs,torch.ops.aten.abs.default,elementwise,绝对值,FP32、BF16、FP8_E4M3、FP8_E5M2
-jax.lax.acos,torch.ops.aten.acos.default,elementwise,反余弦,FP32、BF16
-jax.lax.acosh,torch.ops.aten.acosh.default,elementwise,反双曲余弦,
-jax.lax.add,torch.ops.aten.add.Tensor,elementwise,加法,
-jax.lax.asin,torch.ops.aten.asin.default,elementwise,反正弦,
-jax.lax.asinh,torch.ops.aten.asinh.default,elementwise,反双曲正弦,
-jax.lax.atan,torch.ops.aten.atan.default,elementwise,反正切,
-jax.lax.atan2,torch.ops.aten.atan2.default,elementwise,双参数反正切,
-jax.lax.atanh,torch.ops.aten.atanh.default,elementwise,反双曲正切,
-jax.lax.bessel_i0e,torch.ops.aten.special_i0e.default,elementwise,第一类修正贝塞尔函数 I0e,
-jax.lax.bessel_i1e,torch.ops.aten.special_i1e.default,elementwise,第一类修正贝塞尔函数 I1e,
-jax.lax.ceil,torch.ops.aten.ceil.default,elementwise,向上取整,
-jax.lax.clamp,torch.ops.aten.clamp.default,elementwise,区间截断,
-jax.lax.complex,torch.ops.aten.complex.default,elementwise,复数构造,FP32
-jax.lax.conj,torch.ops.aten.conj.default,elementwise,复共轭,
-jax.lax.cos,torch.ops.aten.cos.default,elementwise,余弦,
-jax.lax.cosh,torch.ops.aten.cosh.default,elementwise,双曲余弦,
-jax.lax.digamma,torch.ops.aten.digamma.default,elementwise,双伽玛函数,
-jax.lax.div,torch.ops.aten.div.Tensor,elementwise,除法,
-jax.lax.eq,torch.ops.aten.eq.Tensor,elementwise,等于比较,
-jax.lax.erf,torch.ops.aten.erf.default,elementwise,误差函数,
-jax.lax.erf_inv,torch.ops.aten.erfinv.default,elementwise,误差函数反函数,
-jax.lax.erfc,torch.ops.aten.erfc.default,elementwise,互补误差函数,
-jax.lax.exp,torch.ops.aten.exp.default,elementwise,指数,
-jax.lax.exp2,torch.ops.aten.exp2.default,elementwise,以 2 为底的指数,
-jax.lax.expm1,torch.ops.aten.expm1.default,elementwise,e^x - 1,
-jax.lax.floor,torch.ops.aten.floor.default,elementwise,向下取整,
-jax.lax.ge,torch.ops.aten.ge.Tensor,elementwise,大于等于比较,
-jax.lax.gt,torch.ops.aten.gt.Tensor,elementwise,大于比较,
-jax.lax.igamma,torch.special.gammainc,elementwise,下不完全伽玛函数,
-jax.lax.igammac,torch.special.gammaincc,elementwise,上不完全伽玛函数,
-jax.lax.integer_pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,整数幂,
-jax.lax.is_finite,torch.ops.aten.isfinite.default,elementwise,是否为有限值,
-jax.lax.le,torch.ops.aten.le.Tensor,elementwise,小于等于比较,
-jax.lax.lgamma,torch.ops.aten.lgamma.default,elementwise,伽玛函数对数,
-jax.lax.log,torch.ops.aten.log.default,elementwise,自然对数,
-jax.lax.log1p,torch.ops.aten.log1p.default,elementwise,ln(1+x),
-jax.lax.logistic,torch.ops.aten.sigmoid.default,elementwise,Sigmoid/逻辑函数,
-jax.lax.lt,torch.ops.aten.lt.Tensor,elementwise,小于比较,
-jax.lax.max,torch.ops.aten.maximum.default,elementwise,逐元素最大值,
-jax.lax.min,torch.ops.aten.minimum.default,elementwise,逐元素最小值,
-jax.lax.mul,torch.ops.aten.mul.Tensor,elementwise,乘法,
-jax.lax.ne,torch.ops.aten.ne.Tensor,elementwise,不等于比较,
-jax.lax.neg,torch.ops.aten.neg.default,elementwise,取负,
-jax.lax.nextafter,torch.ops.aten.nextafter.default,elementwise,朝向下一个可表示浮点,
-jax.lax.polygamma,torch.ops.aten.special_polygamma.default,elementwise,多伽玛函数,
-jax.lax.pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,幂,
-jax.lax.reciprocal,torch.ops.aten.reciprocal.default,elementwise,倒数,
-jax.lax.rem,torch.ops.aten.fmod.Tensor,elementwise,余数,
-jax.lax.round,torch.ops.aten.round.default,elementwise,四舍五入,
-jax.lax.rsqrt,torch.ops.aten.rsqrt.default,elementwise,反平方根,
-jax.lax.shift_left,torch.ops.aten.bitwise_left_shift.Tensor,elementwise,按位左移,
-jax.lax.shift_right_arithmetic,torch.ops.aten.bitwise_right_shift.Tensor,elementwise,按位算术右移,
-jax.lax.sign,torch.ops.aten.sign.default,elementwise,符号,
-jax.lax.sin,torch.ops.aten.sin.default,elementwise,正弦,
-jax.lax.sinh,torch.ops.aten.sinh.default,elementwise,双曲正弦,
-jax.lax.sqrt,torch.ops.aten.sqrt.default,elementwise,平方根,
-jax.lax.square,torch.ops.aten.square.default,elementwise,平方,
-jax.lax.sub,torch.ops.aten.sub.Tensor,elementwise,减法,
-jax.lax.tan,torch.ops.aten.tan.default,elementwise,正切,
-jax.lax.tanh,torch.ops.aten.tanh.default,elementwise,双曲正切,
-jax.lax.zeta,torch.ops.aten.special_zeta.default,elementwise,黎曼ζ函数,FP32
-jax.lax.approx_max_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最大值,
-jax.lax.approx_min_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最小值,
-jax.lax.argmax,torch.ops.aten.argmax.default,reduction,最大值索引,
-jax.lax.argmin,torch.ops.aten.argmin.default,reduction,最小值索引,
-jax.lax.cumlogsumexp,torch.ops.aten.logcumsumexp.default,reduction,累积 log-sum-exp,
-jax.lax.cummax,torch.ops.aten.cummax.default,reduction,累积最大值,
-jax.lax.cummin,torch.ops.aten.cummin.default,reduction,累积最小值,
-jax.lax.cumprod,torch.ops.aten.cumprod.default,reduction,累积乘积,
-jax.lax.cumsum,torch.ops.aten.cumsum.default,reduction,累积和,
-jax.lax.reduce_and,torch.ops.aten.all.default,reduction,逻辑与归约,
-jax.lax.reduce_max,torch.ops.aten.amax.default,reduction,最大值归约,
-jax.lax.reduce_min,torch.ops.aten.amin.default,reduction,最小值归约,
-jax.lax.reduce_or,torch.ops.aten.any.default,reduction,逻辑或归约,
-jax.lax.reduce_prod,torch.ops.aten.prod.default,reduction,乘积归约,
-jax.lax.reduce_sum,torch.ops.aten.sum.default,reduction,求和归约,
-jax.lax.top_k,torch.ops.aten.topk.default,reduction,Top-K,
-jax.lax.cholesky,torch.ops.aten.linalg_cholesky.default,linalg,Cholesky 分解,
-jax.lax.eig,torch.ops.aten.linalg_eig.default,linalg,特征分解,
-jax.lax.eigh,torch.ops.aten.linalg_eigh.default,linalg,对称/厄米特特征分解,
-jax.lax.eigvals,torch.ops.aten.linalg_eigvals.default,linalg,特征值分解,
-jax.lax.householder_product,torch.ops.aten.linalg_householder_product.default,linalg,Householder 乘积,
-jax.lax.lu,torch.ops.aten.linalg_lu.default,linalg,LU 分解,
-jax.lax.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,
-jax.lax.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,
-jax.lax.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,
-jax.lax.bitcast_convert_type,torch.ops.aten.view.dtype,array,按位重解释 dtype,
-jax.lax.broadcast,torch.ops.aten.expand.default,array,广播到目标形状,
-jax.lax.broadcast_in_dim,torch.ops.aten.expand.default,array,按维度广播（常需配合 reshape/permute）,
-jax.lax.broadcast_shapes,torch.broadcast_shapes,array,计算广播后形状,
-jax.lax.collapse,torch.ops.aten.reshape.default,array,维度折叠,
-jax.lax.concatenate,torch.ops.aten.cat.default,array,拼接,
-jax.lax.dynamic_index_in_dim,torch.ops.aten.select.int,array,动态单维索引,
-jax.lax.dynamic_slice_in_dim,torch.ops.aten.slice.Tensor,array,动态单维切片,
-jax.lax.empty,torch.empty,array,创建未初始化张量,
-jax.lax.expand_dims,torch.ops.aten.unsqueeze.default,array,扩展维度,
-jax.lax.full,torch.full,array,指定形状常量填充,
-jax.lax.full_like,torch.full_like,array,按输入形状常量填充,
-jax.lax.index_in_dim,torch.ops.aten.select.int,array,单维索引,
-jax.lax.index_take,torch.ops.aten.index_select.default,array,按索引提取,
-jax.lax.iota,torch.arange,array,等差序列,
-jax.lax.pad,torch.ops.aten.pad.default,array,填充,
-jax.lax.reshape,torch.ops.aten.reshape.default,array,重塑,
-jax.lax.rev,torch.ops.aten.flip.default,array,维度反转,
-jax.lax.shape_as_value,x.shape,array,将 shape 作为值使用,
-jax.lax.slice_in_dim,torch.ops.aten.slice.Tensor,array,单维切片,
-jax.lax.split,torch.ops.aten.split.Tensor,array,拆分,
-jax.lax.squeeze,torch.ops.aten.squeeze.dims,array,压缩长度为1的维度,
-jax.lax.tile,torch.ops.aten.tile.default,array,平铺复制,
-jax.lax.transpose,torch.ops.aten.transpose.int,array,转置,
-jax.lax.batch_matmul,torch.ops.aten.bmm.default,other,批量矩阵乘,
-jax.lax.conv,torch.ops.aten.conv2d.default,other,卷积,
-jax.lax.conv_general_dilated,torch.ops.aten.conv2d.default,other,通用空洞卷积,
-jax.lax.conv_general_dilated_patches,torch.ops.aten.unfold.default,other,提取卷积补丁,
-jax.lax.conv_transpose,torch.ops.aten.conv_transpose2d.input,other,转置卷积,
-jax.lax.conv_with_general_padding,torch.ops.aten.conv2d.default,other,通用填充卷积,
-jax.lax.dot,torch.ops.aten.matmul.default,other,点积/矩阵乘,
-jax.lax.dot_general,torch.ops.aten.einsum.default,other,通用点积,
-jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,
-jax.lax.sort,torch.ops.aten.sort.default,other,排序,
+jax,pytorch,type,remark,jax 不支持精度,torch 不支持精度
+jax.lax.abs,torch.ops.aten.abs.default,elementwise,绝对值,,
+jax.lax.acos,torch.ops.aten.acos.default,elementwise,反余弦,,FP8_E4M3、FP8_E5M2
+jax.lax.acosh,torch.ops.aten.acosh.default,elementwise,反双曲余弦,,FP8_E4M3、FP8_E5M2
+jax.lax.add,torch.ops.aten.add.Tensor,elementwise,加法,,FP8_E4M3、FP8_E5M2
+jax.lax.asin,torch.ops.aten.asin.default,elementwise,反正弦,,FP8_E4M3、FP8_E5M2
+jax.lax.asinh,torch.ops.aten.asinh.default,elementwise,反双曲正弦,,FP8_E4M3、FP8_E5M2
+jax.lax.atan,torch.ops.aten.atan.default,elementwise,反正切,,FP8_E4M3、FP8_E5M2
+jax.lax.atan2,torch.ops.aten.atan2.default,elementwise,双参数反正切,,FP8_E4M3、FP8_E5M2
+jax.lax.atanh,torch.ops.aten.atanh.default,elementwise,反双曲正切,,FP8_E4M3、FP8_E5M2
+jax.lax.bessel_i0e,torch.ops.aten.special_i0e.default,elementwise,第一类修正贝塞尔函数 I0e,,FP8_E4M3、FP8_E5M2
+jax.lax.bessel_i1e,torch.ops.aten.special_i1e.default,elementwise,第一类修正贝塞尔函数 I1e,FP8_E4M3、FP8_E5M2,FP8_E4M3、FP8_E5M2
+jax.lax.ceil,torch.ops.aten.ceil.default,elementwise,向上取整,,FP8_E4M3、FP8_E5M2
+jax.lax.clamp,torch.ops.aten.clamp.default,elementwise,区间截断,,FP8_E4M3、FP8_E5M2
+jax.lax.complex,torch.ops.aten.complex.default,elementwise,复数构造,BF16、FP8_E4M3、FP8_E5M2,BF16、FP8_E4M3、FP8_E5M2
+jax.lax.conj,torch.ops.aten.conj.default,elementwise,复共轭,BF16、FP8_E4M3、FP8_E5M2,
+jax.lax.cos,torch.ops.aten.cos.default,elementwise,余弦,,FP8_E4M3、FP8_E5M2
+jax.lax.cosh,torch.ops.aten.cosh.default,elementwise,双曲余弦,,FP8_E4M3、FP8_E5M2
+jax.lax.digamma,torch.ops.aten.digamma.default,elementwise,双伽玛函数,,FP8_E4M3、FP8_E5M2
+jax.lax.div,torch.ops.aten.div.Tensor,elementwise,除法,,FP8_E4M3、FP8_E5M2
+jax.lax.eq,torch.ops.aten.eq.Tensor,elementwise,等于比较,,
+jax.lax.erf,torch.ops.aten.erf.default,elementwise,误差函数,,FP8_E4M3、FP8_E5M2
+jax.lax.erf_inv,torch.ops.aten.erfinv.default,elementwise,误差函数反函数,,FP8_E4M3、FP8_E5M2
+jax.lax.erfc,torch.ops.aten.erfc.default,elementwise,互补误差函数,FP8_E4M3、FP8_E5M2,FP8_E4M3、FP8_E5M2
+jax.lax.exp,torch.ops.aten.exp.default,elementwise,指数,,FP8_E4M3、FP8_E5M2
+jax.lax.exp2,torch.ops.aten.exp2.default,elementwise,以 2 为底的指数,,FP8_E4M3、FP8_E5M2
+jax.lax.expm1,torch.ops.aten.expm1.default,elementwise,e^x - 1,,FP8_E4M3、FP8_E5M2
+jax.lax.floor,torch.ops.aten.floor.default,elementwise,向下取整,,FP8_E4M3、FP8_E5M2
+jax.lax.ge,torch.ops.aten.ge.Tensor,elementwise,大于等于比较,,FP8_E4M3、FP8_E5M2
+jax.lax.gt,torch.ops.aten.gt.Tensor,elementwise,大于比较,,FP8_E4M3、FP8_E5M2
+jax.lax.igamma,torch.special.gammainc,elementwise,下不完全伽玛函数,,FP8_E4M3、FP8_E5M2
+jax.lax.igammac,torch.special.gammaincc,elementwise,上不完全伽玛函数,,FP8_E4M3、FP8_E5M2
+jax.lax.integer_pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,整数幂,,FP8_E4M3、FP8_E5M2
+jax.lax.is_finite,torch.ops.aten.isfinite.default,elementwise,是否为有限值,,FP8_E4M3
+jax.lax.le,torch.ops.aten.le.Tensor,elementwise,小于等于比较,,FP8_E4M3、FP8_E5M2
+jax.lax.lgamma,torch.ops.aten.lgamma.default,elementwise,伽玛函数对数,,FP8_E4M3、FP8_E5M2
+jax.lax.log,torch.ops.aten.log.default,elementwise,自然对数,,FP8_E4M3、FP8_E5M2
+jax.lax.log1p,torch.ops.aten.log1p.default,elementwise,ln(1+x),,FP8_E4M3、FP8_E5M2
+jax.lax.logistic,torch.ops.aten.sigmoid.default,elementwise,Sigmoid/逻辑函数,,FP8_E4M3、FP8_E5M2
+jax.lax.lt,torch.ops.aten.lt.Tensor,elementwise,小于比较,,FP8_E4M3、FP8_E5M2
+jax.lax.max,torch.ops.aten.maximum.default,elementwise,逐元素最大值,,FP8_E4M3、FP8_E5M2
+jax.lax.min,torch.ops.aten.minimum.default,elementwise,逐元素最小值,,FP8_E4M3、FP8_E5M2
+jax.lax.mul,torch.ops.aten.mul.Tensor,elementwise,乘法,,
+jax.lax.ne,torch.ops.aten.ne.Tensor,elementwise,不等于比较,,
+jax.lax.neg,torch.ops.aten.neg.default,elementwise,取负,,FP8_E4M3、FP8_E5M2
+jax.lax.nextafter,torch.ops.aten.nextafter.default,elementwise,朝向下一个可表示浮点,,FP8_E4M3、FP8_E5M2
+jax.lax.polygamma,torch.ops.aten.special_polygamma.default,elementwise,多伽玛函数,,FP8_E4M3、FP8_E5M2
+jax.lax.pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,幂,,FP8_E4M3、FP8_E5M2
+jax.lax.reciprocal,torch.ops.aten.reciprocal.default,elementwise,倒数,,FP8_E4M3、FP8_E5M2
+jax.lax.rem,torch.ops.aten.fmod.Tensor,elementwise,余数,,FP8_E4M3、FP8_E5M2
+jax.lax.round,torch.ops.aten.round.default,elementwise,四舍五入,,FP8_E4M3、FP8_E5M2
+jax.lax.rsqrt,torch.ops.aten.rsqrt.default,elementwise,反平方根,,FP8_E4M3、FP8_E5M2
+jax.lax.shift_left,torch.ops.aten.bitwise_left_shift.Tensor,elementwise,按位左移,,
+jax.lax.shift_right_arithmetic,torch.ops.aten.bitwise_right_shift.Tensor,elementwise,按位算术右移,,
+jax.lax.sign,torch.ops.aten.sign.default,elementwise,符号,,FP8_E4M3、FP8_E5M2
+jax.lax.sin,torch.ops.aten.sin.default,elementwise,正弦,,FP8_E4M3、FP8_E5M2
+jax.lax.sinh,torch.ops.aten.sinh.default,elementwise,双曲正弦,,FP8_E4M3、FP8_E5M2
+jax.lax.sqrt,torch.ops.aten.sqrt.default,elementwise,平方根,,FP8_E4M3、FP8_E5M2
+jax.lax.square,torch.ops.aten.square.default,elementwise,平方,,FP8_E4M3、FP8_E5M2
+jax.lax.sub,torch.ops.aten.sub.Tensor,elementwise,减法,,FP8_E4M3、FP8_E5M2
+jax.lax.tan,torch.ops.aten.tan.default,elementwise,正切,,FP8_E4M3、FP8_E5M2
+jax.lax.tanh,torch.ops.aten.tanh.default,elementwise,双曲正切,,FP8_E4M3、FP8_E5M2
+jax.lax.zeta,torch.ops.aten.special_zeta.default,elementwise,黎曼ζ函数,,BF16、FP8_E4M3、FP8_E5M2
+jax.lax.approx_max_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最大值,,
+jax.lax.approx_min_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最小值,,
+jax.lax.argmax,torch.ops.aten.argmax.default,reduction,最大值索引,,
+jax.lax.argmin,torch.ops.aten.argmin.default,reduction,最小值索引,,
+jax.lax.cumlogsumexp,torch.ops.aten.logcumsumexp.default,reduction,累积 log-sum-exp,,
+jax.lax.cummax,torch.ops.aten.cummax.default,reduction,累积最大值,,
+jax.lax.cummin,torch.ops.aten.cummin.default,reduction,累积最小值,,
+jax.lax.cumprod,torch.ops.aten.cumprod.default,reduction,累积乘积,,
+jax.lax.cumsum,torch.ops.aten.cumsum.default,reduction,累积和,,
+jax.lax.reduce_and,torch.ops.aten.all.default,reduction,逻辑与归约,,
+jax.lax.reduce_max,torch.ops.aten.amax.default,reduction,最大值归约,,
+jax.lax.reduce_min,torch.ops.aten.amin.default,reduction,最小值归约,,
+jax.lax.reduce_or,torch.ops.aten.any.default,reduction,逻辑或归约,,
+jax.lax.reduce_prod,torch.ops.aten.prod.default,reduction,乘积归约,,
+jax.lax.reduce_sum,torch.ops.aten.sum.default,reduction,求和归约,,
+jax.lax.top_k,torch.ops.aten.topk.default,reduction,Top-K,,
+jax.lax.cholesky,torch.ops.aten.linalg_cholesky.default,linalg,Cholesky 分解,,
+jax.lax.eig,torch.ops.aten.linalg_eig.default,linalg,特征分解,,
+jax.lax.eigh,torch.ops.aten.linalg_eigh.default,linalg,对称/厄米特特征分解,,
+jax.lax.eigvals,torch.ops.aten.linalg_eigvals.default,linalg,特征值分解,,
+jax.lax.householder_product,torch.ops.aten.linalg_householder_product.default,linalg,Householder 乘积,,
+jax.lax.lu,torch.ops.aten.linalg_lu.default,linalg,LU 分解,,
+jax.lax.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,,
+jax.lax.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,,
+jax.lax.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,,
+jax.lax.bitcast_convert_type,torch.ops.aten.view.dtype,array,按位重解释 dtype,,
+jax.lax.broadcast,torch.ops.aten.expand.default,array,广播到目标形状,,
+jax.lax.broadcast_in_dim,torch.ops.aten.expand.default,array,按维度广播（常需配合 reshape/permute）,,
+jax.lax.broadcast_shapes,torch.broadcast_shapes,array,计算广播后形状,,
+jax.lax.collapse,torch.ops.aten.reshape.default,array,维度折叠,,
+jax.lax.concatenate,torch.ops.aten.cat.default,array,拼接,,
+jax.lax.dynamic_index_in_dim,torch.ops.aten.select.int,array,动态单维索引,,
+jax.lax.dynamic_slice_in_dim,torch.ops.aten.slice.Tensor,array,动态单维切片,,
+jax.lax.empty,torch.empty,array,创建未初始化张量,,
+jax.lax.expand_dims,torch.ops.aten.unsqueeze.default,array,扩展维度,,
+jax.lax.full,torch.full,array,指定形状常量填充,,
+jax.lax.full_like,torch.full_like,array,按输入形状常量填充,,
+jax.lax.index_in_dim,torch.ops.aten.select.int,array,单维索引,,
+jax.lax.index_take,torch.ops.aten.index_select.default,array,按索引提取,,
+jax.lax.iota,torch.arange,array,等差序列,,
+jax.lax.pad,torch.ops.aten.pad.default,array,填充,,
+jax.lax.reshape,torch.ops.aten.reshape.default,array,重塑,,
+jax.lax.rev,torch.ops.aten.flip.default,array,维度反转,,
+jax.lax.shape_as_value,x.shape,array,将 shape 作为值使用,,
+jax.lax.slice_in_dim,torch.ops.aten.slice.Tensor,array,单维切片,,
+jax.lax.split,torch.ops.aten.split.Tensor,array,拆分,,
+jax.lax.squeeze,torch.ops.aten.squeeze.dims,array,压缩长度为1的维度,,
+jax.lax.tile,torch.ops.aten.tile.default,array,平铺复制,,
+jax.lax.transpose,torch.ops.aten.transpose.int,array,转置,,
+jax.lax.batch_matmul,torch.ops.aten.bmm.default,other,批量矩阵乘,,
+jax.lax.conv,torch.ops.aten.conv2d.default,other,卷积,,
+jax.lax.conv_general_dilated,torch.ops.aten.conv2d.default,other,通用空洞卷积,,
+jax.lax.conv_general_dilated_patches,torch.ops.aten.unfold.default,other,提取卷积补丁,,
+jax.lax.conv_transpose,torch.ops.aten.conv_transpose2d.input,other,转置卷积,,
+jax.lax.conv_with_general_padding,torch.ops.aten.conv2d.default,other,通用填充卷积,,
+jax.lax.dot,torch.ops.aten.matmul.default,other,点积/矩阵乘,,
+jax.lax.dot_general,torch.ops.aten.einsum.default,other,通用点积,,
+jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,,
+jax.lax.sort,torch.ops.aten.sort.default,other,排序,,
