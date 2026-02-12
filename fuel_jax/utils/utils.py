@@ -49,14 +49,17 @@ def ndarray2Array(arr: np.ndarray, dtype=None):
 
 
 def tensor2ndarray(tensor):
-    # @haifeng only tensor cpu can transform ndarray
-    if type(tensor) is tuple:
+    # @haifeng some func return a list or tuple like [val,idx] or (val,idx) and we only need val
+    if type(tensor) in (tuple, list):
         tensor = tensor[0]
+    # @haifeng only tensor cpu can transform ndarray
     tensor = tensor.detach().to("cpu").to(torch.float32).numpy()
     return np.array(tensor, dtype=np.float32)
 
 
 def Array2ndarray(Arr):
+    if type(Arr) in (tuple, list):
+        Arr = Arr[0]
     return np.array(Arr, dtype=np.float32)
 
 
