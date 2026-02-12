@@ -68,7 +68,7 @@ def main(
         "jax.lax.cummax",
         "jax.lax.cummin",
         "jax.lax.cumprod",
-        "jax.lax.cumlogsum",
+        "jax.lax.cumsum",
     ):
         inp["axis"] = min(inp["axis"], inp["operand"].ndim - 1)
         if "index_dtype" in inp:
@@ -108,7 +108,7 @@ def main(
                 "jax.lax.cummax",
                 "jax.lax.cummin",
                 "jax.lax.cumprod",
-                "jax.lax.cumlogsum",
+                "jax.lax.cumsum",
             ):
                 fn_compile = jax.jit(fn, static_argnames=("axis",))
                 out_jit = Array2ndarray(fn_compile(**inp))
