@@ -97,6 +97,26 @@ def list_ops(test_id, input_dir=ROOT_DIR / "input") -> List[str]:
     return ops
 
 
+def get_all_op_name(
+    rules_path: Path = ROOT_DIR / "dataset" / "jax_rules.yaml",
+    type_name: str | None = None,
+) -> List[str]:
+    rule = load_yaml(rules_path)
+    all_types = ("elementwise", "reduction", "linalg", "array", "other")
+
+    if type_name is not None:
+        if type_name not in all_types:
+            raise ValueError(
+                f"Unknown type_name={type_name!r}, choose from {all_types}"
+            )
+        return [entry["op_name"] for entry in rule.get(type_name, [])]
+
+    ops: List[str] = []
+    for t in all_types:
+        ops.extend(entry["op_name"] for entry in rule.get(t, []))
+    return ops
+
+
 def load_yaml(yaml_path: Path) -> dict:
     with yaml_path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f)

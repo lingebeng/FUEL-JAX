@@ -9,6 +9,7 @@ from .utils.utils import (
     save_npz,
     parse_shape,
     get_dir_list,
+    get_all_op_name,
     load_jax2torch_map,
     read_csv,
     RECORD,
@@ -48,12 +49,7 @@ def gen(
     test_id: int = typer.Option(0, help="Test ID for file naming"),
 ) -> None:
     gen = Generator(seed=seed)
-    type_name = "linalg"
-    ops = (
-        [op_name]
-        if op_name != "all"
-        else [entry["op_name"] for entry in gen.rule.get(type_name, [])]
-    )
+    ops = [op_name] if op_name != "all" else get_all_op_name()
 
     out_dir = ROOT_DIR / "input"
     out_dir.mkdir(parents=True, exist_ok=True)
