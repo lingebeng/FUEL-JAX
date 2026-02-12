@@ -75,6 +75,15 @@ def _run_op(fn, inp: dict, jax_op: str, op_name: str):
         eq = _dot_einsum_equation(lhs, rhs)
         return fn(eq, [lhs, rhs])
 
+    if jax_op == "jax.lax.linalg.triangular_solve":
+        return fn(
+            inp["a"],
+            inp["b"],
+            upper=True,
+            left=True,
+            unitriangular=False,
+        )
+
     if jax_op == "jax.lax.reduce_sum":
         return torch.sum(inp["operand"], dim=inp["axes"])
 
@@ -100,6 +109,17 @@ def _run_op_compile(fn, inp: dict, jax_op: str, op_name: str):
             return fn(eq, [a, b])
 
         return torch.compile(_dot_einsum_impl)(lhs, rhs)
+
+    if jax_op == "jax.lax.linalg.triangular_solve":
+        return torch.compile(
+            lambda a, b: fn(
+                a,
+                b,
+                upper=True,
+                left=True,
+                unitriangular=False,
+            )
+        )(inp["a"], inp["b"])
 
     if jax_op == "jax.lax.reduce_sum":
         axes = inp["axes"]

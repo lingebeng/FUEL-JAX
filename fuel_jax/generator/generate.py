@@ -58,6 +58,14 @@ class Generator:
         b = int(self.rng.integers(1, 5))
         return m, k, n, b
 
+    def _square_dim_from_shape(self, shape: tuple) -> int:
+        shape = self._normalize_shape_hint(shape)
+        if len(shape) >= 2:
+            return max(1, min(shape[-2], shape[-1]))
+        if len(shape) == 1:
+            return max(1, shape[0])
+        return int(self.rng.integers(2, 9))
+
     def _generate_dot_inputs(self, shape: tuple, case_id: int | None = None) -> dict:
         entry = self._get_entry("jax.lax.dot")
         lhs_spec = entry["generation"]["lhs"]
@@ -120,6 +128,64 @@ class Generator:
             mean = input_spec.get("mean", 0.0)
             std = input_spec.get("std", 1.0)
             return self.rng.normal(loc=mean, scale=std, size=shape).astype(np.float32)
+
+        if strategy == "square_normal":
+            n = self._square_dim_from_shape(shape)
+            return self.rng.normal(loc=0.0, scale=1.0, size=(n, n)).astype(np.float32)
+
+        if strategy == "symmetric_matrix":
+            n = self._square_dim_from_shape(shape)
+            x = self.rng.normal(loc=0.0, scale=1.0, size=(n, n)).astype(np.float32)
+            return ((x + x.T) / 2.0).astype(np.float32)
+
+        if strategy == "spd_matrix":
+            n = self._square_dim_from_shape(shape)
+            x = self.rng.normal(loc=0.0, scale=1.0, size=(n, n)).astype(np.float32)
+            eps = float(input_spec.get("eps", 1e-3))
+            eye = np.eye(n, dtype=np.float32)
+            return (x @ x.T + eps * eye).astype(np.float32)
+
+        if strategy == "triangular_matrix":
+            n = self._square_dim_from_shape(shape)
+            x = self.rng.normal(loc=0.0, scale=1.0, size=(n, n)).astype(np.float32)
+            upper = bool(input_spec.get("upper", True))
+            return (
+                np.triu(x).astype(np.float32)
+                if upper
+                else np.tril(x).astype(np.float32)
+            )
+
+        if strategy == "rhs_from_input":
+            ref_name = input_spec.get("from_input", "a")
+            ref = None if generated_inputs is None else generated_inputs.get(ref_name)
+            if ref is None:
+                n = self._square_dim_from_shape(shape)
+            else:
+                ref_arr = np.asarray(ref)
+                n = (
+                    int(ref_arr.shape[-1])
+                    if ref_arr.ndim >= 2
+                    else int(ref_arr.shape[0])
+                )
+            cols = int(input_spec.get("cols", n))
+            return self.rng.normal(loc=0.0, scale=1.0, size=(n, cols)).astype(
+                np.float32
+            )
+
+        if strategy == "taus_from_input":
+            ref_name = input_spec.get("from_input", "a")
+            ref = None if generated_inputs is None else generated_inputs.get(ref_name)
+            if ref is None:
+                k = self._square_dim_from_shape(shape)
+            else:
+                ref_arr = np.asarray(ref)
+                if ref_arr.ndim >= 2:
+                    k = min(ref_arr.shape[-2], ref_arr.shape[-1])
+                else:
+                    k = int(ref_arr.shape[0])
+            return self.rng.normal(loc=0.0, scale=1.0, size=(int(k),)).astype(
+                np.float32
+            )
 
         if strategy == "axis":
             ref_name = input_spec.get("from_input", "operand")

@@ -75,6 +75,14 @@ def _normalize_axis(inp: dict, op_name: str) -> None:
 def _run_op(fn, inp: dict, op_name: str):
     if op_name == "jax.lax.top_k":
         return fn(**inp)[0]
+    if op_name == "jax.lax.linalg.triangular_solve":
+        return fn(
+            inp["a"],
+            inp["b"],
+            left_side=True,
+            lower=False,
+            unit_diagonal=False,
+        )
     if op_name != "jax.lax.dot":
         return fn(**inp)
     dnums = _dot_dimension_numbers(inp["lhs"].ndim, inp["rhs"].ndim)
@@ -87,6 +95,18 @@ def _run_op_jit(fn, inp: dict, op_name: str):
     if op_name == "jax.lax.top_k":
         static_argnames = _static_argnames(op_name)
         return jax.jit(fn, static_argnames=static_argnames)(**inp)[0]
+
+    if op_name == "jax.lax.linalg.triangular_solve":
+        fn_compile = jax.jit(
+            lambda a, b: fn(
+                a,
+                b,
+                left_side=True,
+                lower=False,
+                unit_diagonal=False,
+            )
+        )
+        return fn_compile(inp["a"], inp["b"])
 
     if op_name == "jax.lax.dot":
         dnums = _dot_dimension_numbers(inp["lhs"].ndim, inp["rhs"].ndim)
