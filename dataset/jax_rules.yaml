@@ -211,6 +211,45 @@ linalg:
         range: [0,2]
       index_dtype: *strat_int_scalar
 
+  - op_name: jax.lax.cumlogsumexp
+    input: [operand, axis]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+  - op_name: jax.lax.cummax
+    input: [operand, axis]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+
+  - op_name: jax.lax.cummin
+    input: [operand, axis]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+
+  - op_name: jax.lax.cumprod
+    input: [operand, axis]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+
+  - op_name: jax.lax.cumsum
+    input: [operand, axis]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+
 array: []
 other:
   - op_name: jax.lax.sort

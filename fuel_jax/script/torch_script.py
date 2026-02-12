@@ -73,9 +73,18 @@ def main(
         inp[k] = v
     op_suffix = op_name.split(".", 1)[1]
 
-    if jax_op in ("jax.lax.argmax", "jax.lax.argmin"):
+    if jax_op in (
+        "jax.lax.argmax",
+        "jax.lax.argmin",
+        "jax.lax.cumlogsumexp",
+        "jax.lax.cummax",
+        "jax.lax.cummin",
+        "jax.lax.cumprod",
+        "jax.lax.cumlogsum",
+    ):
         inp["axis"] = min(inp["axis"], inp["operand"].ndim - 1)
-        del inp["index_dtype"]
+        if "index_dtype" in inp:
+            del inp["index_dtype"]
 
     fn = _resolve_dotted(torch, op_suffix)
 

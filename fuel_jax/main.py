@@ -122,5 +122,28 @@ def validate(
         logger.info(f"Final check result for {output_dir.name}: {result}")
 
 
+@app.command()
+def run(
+    op_name: str = typer.Option(..., help="JAX op name (jax.lax.xxx) or 'all'"),
+    output_file: Path | None = typer.Option(
+        None, help="Output .npz file (single op) or directory (all ops)"
+    ),
+    seed: int = typer.Option(0, help="Random seed"),
+    shape: str = typer.Option("64,64", help="Shape like '2,3' or 'scalar'"),
+    device: str = typer.Option("cpu", help="Device to run on (cpu, gpu, tpu)"),
+    mode: str = typer.Option("compiler", help="Execution mode (eager or compiler)"),
+    test_id: int = typer.Option(0, help="Test ID for file naming and execution"),
+):
+    gen(
+        op_name=op_name,
+        output_file=output_file,
+        seed=seed,
+        shape=shape,
+        test_id=test_id,
+    )
+    exec(op_name=op_name, device=device, mode=mode, test_id=test_id)
+    validate(op_name=op_name)
+
+
 if __name__ == "__main__":
     app()
