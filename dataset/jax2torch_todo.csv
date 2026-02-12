@@ -1,6 +1,6 @@
 jax,pytorch,type,remark,reason
 jax.lax.cbrt,"torch.pow(x,1/3)",elementwise,立方根,可间接替代
-jax.lax.clz,None,elementwise,前导零计数,
+jax.lax.clz,None,elementwise,前导零计数,可间接替代
 jax.lax.igamma_grad_a,None,elementwise,igamma 对参数 a 的梯度,
 jax.lax.population_count,None,elementwise,置位计数,
 jax.lax.reduce_precision,None,elementwise,降低数值精度,
@@ -78,16 +78,21 @@ jax.lax.while_loop,None,other,while 循环 primitive,
 jax.lax.with_sharding_constraint,None,other,分片约束,
 
 jax.lax.rng_uniform,None,other,均匀随机数,不同设备、框架使用伪随机数生成算法
-jax.lax.getattr,getattr,other,属性读取,
-jax.lax.pbroadcast,torch.distributed.broadcast,other,跨设备广播,
-jax.lax.dtype,x.dtype,other,获取 dtype,
-jax.lax.gather,torch.ops.aten.gather.default,other,收集/索引,
-jax.lax.scatter,torch.ops.aten.scatter_.src,other,散射写入,
-jax.lax.scatter_add,torch.ops.aten.scatter_add_.default,other,散射加,
-jax.lax.scatter_max,torch.ops.aten.scatter_reduce_.two,other,散射最大,
-jax.lax.scatter_min,torch.ops.aten.scatter_reduce_.two,other,散射最小,
-jax.lax.scatter_mul,torch.ops.aten.scatter_reduce_.two,other,散射乘,
-jax.lax.create_token,torch.ops.aten._make_dep_token,other,创建依赖 token（内部接口）,
+jax.lax.getattr,getattr,other,属性读取,匹配度有待商榷
+jax.lax.pbroadcast,torch.distributed.broadcast,other,跨设备广播,匹配度有待商榷
+jax.lax.dtype,x.dtype,other,获取 dtype,匹配度有待商榷
+jax.lax.gather,torch.ops.aten.gather.default,other,收集/索引,匹配度有待商榷
+jax.lax.scatter,torch.ops.aten.scatter_.src,other,散射写入,匹配度有待商榷
+jax.lax.scatter_add,torch.ops.aten.scatter_add_.default,other,散射加,匹配度有待商榷
+jax.lax.scatter_max,torch.ops.aten.scatter_reduce_.two,other,散射最大,匹配度有待商榷
+jax.lax.scatter_min,torch.ops.aten.scatter_reduce_.two,other,散射最小,匹配度有待商榷
+jax.lax.scatter_mul,torch.ops.aten.scatter_reduce_.two,other,散射乘,匹配度有待商榷
+jax.lax.create_token,torch.ops.aten._make_dep_token,other,创建依赖 token（内部接口）,匹配度有待商榷
+jax.lax.conv,torch.ops.aten.conv2d.default,other,卷积,匹配度有待商榷
+jax.lax.conv_general_dilated,torch.ops.aten.conv2d.default,other,通用空洞卷积,匹配度有待商榷
+jax.lax.conv_general_dilated_patches,torch.ops.aten.unfold.default,other,提取卷积补丁,匹配度有待商榷
+jax.lax.conv_transpose,torch.ops.aten.conv_transpose2d.input,other,转置卷积,匹配度有待商榷
+jax.lax.conv_with_general_padding,torch.ops.aten.conv2d.default,other,通用填充卷积,匹配度有待商榷
 
 jax.lax.betainc,None,elementwise,不完全贝塔函数,
 jax.lax.bitwise_and,torch.ops.aten.bitwise_and.Tensor,elementwise,按位与,位运算不支持浮点类型
@@ -100,3 +105,27 @@ jax.lax.real,torch.ops.aten.real.default,elementwise,取实部,只支持 subtype
 jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,jax.lax.fft 可以通过传参数对应多种傅里叶、torch里每种傅里叶都有对应的算子
 jax.lax.dot_general,torch.ops.aten.einsum.default,other,通用点积,jax.lax.dot的别名、马上要被取消了
 jax.lax.batch_matmul,torch.ops.aten.bmm.default,other,批量矩阵乘,调用的其实是 jax.lax.dot_general
+jax.lax.iota,torch.arange,array,等差序列,太简单了、没必要
+jax.lax.bitcast_convert_type,torch.ops.aten.view.dtype,array,按位重解释 dtype, 不会产生精度问题、没改变值
+jax.lax.broadcast,torch.ops.aten.expand.default,array,广播到目标形状, 不会产生精度问题、没改变值
+jax.lax.broadcast_in_dim,torch.ops.aten.expand.default,array,按维度广播（常需配合 reshape/permute）, 不会产生精度问题、没改变值
+jax.lax.broadcast_shapes,torch.broadcast_shapes,array,计算广播后形状,不会产生精度问题、没改变值
+jax.lax.collapse,torch.ops.aten.reshape.default,array,维度折叠,不会产生精度问题、没改变值
+jax.lax.concatenate,torch.ops.aten.cat.default,array,拼接,不会产生精度问题、没改变值
+jax.lax.dynamic_index_in_dim,torch.ops.aten.select.int,array,动态单维索引,不会产生精度问题、没改变值
+jax.lax.dynamic_slice_in_dim,torch.ops.aten.slice.Tensor,array,动态单维切片,不会产生精度问题、没改变值
+jax.lax.empty,torch.empty,array,创建未初始化张量,不会产生精度问题、没改变值
+jax.lax.expand_dims,torch.ops.aten.unsqueeze.default,array,扩展维度,不会产生精度问题、没改变值
+jax.lax.full,torch.full,array,指定形状常量填充,不会产生精度问题、没改变值
+jax.lax.full_like,torch.full_like,array,按输入形状常量填充,不会产生精度问题、没改变值
+jax.lax.index_in_dim,torch.ops.aten.select.int,array,单维索引,不会产生精度问题、没改变值
+jax.lax.index_take,torch.ops.aten.index_select.default,array,按索引提取,不会产生精度问题、没改变值
+jax.lax.pad,torch.ops.aten.pad.default,array,填充,不会产生精度问题、没改变值
+jax.lax.reshape,torch.ops.aten.reshape.default,array,重塑,不会产生精度问题、没改变值
+jax.lax.rev,torch.ops.aten.flip.default,array,维度反转,不会产生精度问题、没改变值
+jax.lax.shape_as_value,x.shape,array,将 shape 作为值使用,不会产生精度问题、没改变值
+jax.lax.slice_in_dim,torch.ops.aten.slice.Tensor,array,单维切片,不会产生精度问题、没改变值
+jax.lax.split,torch.ops.aten.split.Tensor,array,拆分,不会产生精度问题、没改变值
+jax.lax.squeeze,torch.ops.aten.squeeze.dims,array,压缩长度为1的维度,不会产生精度问题、没改变值
+jax.lax.tile,torch.ops.aten.tile.default,array,平铺复制,不会产生精度问题、没改变值
+jax.lax.transpose,torch.ops.aten.permute,array,转置,不会产生精度问题、没改变值
