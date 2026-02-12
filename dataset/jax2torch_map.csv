@@ -73,14 +73,13 @@ jax.lax.reduce_min,torch.ops.aten.amin.default,reduction,最小值归约,,FP8_E4
 jax.lax.reduce_sum,torch.ops.aten.sum.default,reduction,求和归约,,FP8_E4M3、FP8_E5M2
 jax.lax.reduce_prod,torch.ops.aten.prod.default,reduction,乘积归约,,FP8_E4M3、FP8_E5M2
 jax.lax.top_k,torch.ops.aten.topk.default,reduction,Top-K,,FP8_E4M3、FP8_E5M2
-jax.lax.cholesky,torch.ops.aten.linalg_cholesky.default,linalg,Cholesky 分解,,
-jax.lax.eig,torch.ops.aten.linalg_eig.default,linalg,特征分解,,
-jax.lax.eigh,torch.ops.aten.linalg_eigh.default,linalg,对称/厄米特特征分解,,
-jax.lax.eigvals,torch.ops.aten.linalg_eigvals.default,linalg,特征值分解,,
-jax.lax.householder_product,torch.ops.aten.linalg_householder_product.default,linalg,Householder 乘积,,
-jax.lax.lu,torch.ops.aten.linalg_lu.default,linalg,LU 分解,,
-jax.lax.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,,
-jax.lax.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,,
-jax.lax.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,,
+jax.lax.linalg.cholesky,torch.ops.aten.linalg_cholesky.default,linalg,Cholesky 分解,,
+jax.lax.linal.eig,torch.ops.aten.linalg_eig.default,linalg,特征分解,,
+jax.lax.linalg.eigh,torch.ops.aten.linalg_eigh.default,linalg,对称/厄米特特征分解,,
+jax.lax.linalg.householder_product,torch.ops.aten.linalg_householder_product.default,linalg,Householder 乘积,,
+jax.lax.linalg.lu,torch.ops.aten.linalg_lu_factor.default,linalg,LU 分解,,
+jax.lax.linalg.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,,
+jax.lax.linalg.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,,
+jax.lax.linalg.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,,
 jax.lax.dot,torch.ops.aten.einsum.default,other,点积/矩阵乘,,
 jax.lax.sort,torch.ops.aten.sort.default,other,排序,,FP8_E4M3、FP8_E5M2
