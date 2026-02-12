@@ -14,6 +14,22 @@ from ..utils.utils import (
 )
 
 
+def _dot_einsum_equation(lhs: torch.Tensor, rhs: torch.Tensor) -> str:
+    if lhs.ndim == 1 and rhs.ndim == 1:
+        return "k,k->"
+    if lhs.ndim == 2 and rhs.ndim == 1:
+        return "mk,k->m"
+    if lhs.ndim == 1 and rhs.ndim == 2:
+        return "k,kn->n"
+    if lhs.ndim == 2 and rhs.ndim == 2:
+        return "mk,kn->mn"
+    if lhs.ndim == 3 and rhs.ndim == 3:
+        return "bmk,bkn->bmn"
+    raise ValueError(
+        f"Unsupported rank pair for jax.lax.dot -> einsum mapping: {lhs.ndim}, {rhs.ndim}"
+    )
+
+
 def main(
     jax_op: str = typer.Option(
         None, help="Operator name (mapped to torch via jax2torch_map.csv)"
@@ -43,8 +59,8 @@ def main(
     dtype_str = PRECISION_MAP[precision]["torch"]
 
     target_device = get_torch_device(device=device)
-    inp_lst = []
-    for v in inp.values():
+    inp_converted = {}
+    for k, v in inp.items():
         if v.shape == ():
             if v.dtype == np.float64:
                 v = float(v)
@@ -55,18 +71,38 @@ def main(
                     v = int(v)
         else:
             v = ndarray2tensor(v, dtype=eval(dtype_str)).to(target_device)
-        inp_lst.append(v)
+        inp_converted[k] = v
     op_suffix = op_name.split(".", 1)[1]
     fn = _resolve_dotted(torch, op_suffix)
 
     try:
         save_kwargs = {}
-        out = tensor2ndarray(fn(*inp_lst))
+        if jax_op == "jax.lax.dot" and op_name == "torch.ops.aten.einsum.default":
+            lhs = inp_converted["lhs"]
+            rhs = inp_converted["rhs"]
+            eq = _dot_einsum_equation(lhs, rhs)
+            out = tensor2ndarray(fn(eq, [lhs, rhs]))
+        else:
+            out = tensor2ndarray(fn(*list(inp_converted.values())))
         save_kwargs[f"out_torch_{device}"] = out
         if compile_flag:
             if fn is not None:
-                fn_compile = torch.compile(fn)
-                out_jit = tensor2ndarray(fn_compile(*inp_lst))
+                if (
+                    jax_op == "jax.lax.dot"
+                    and op_name == "torch.ops.aten.einsum.default"
+                ):
+                    lhs = inp_converted["lhs"]
+                    rhs = inp_converted["rhs"]
+                    eq = _dot_einsum_equation(lhs, rhs)
+
+                    def _dot_einsum_impl(a, b):
+                        return fn(eq, [a, b])
+
+                    fn_compile = torch.compile(_dot_einsum_impl)
+                    out_jit = tensor2ndarray(fn_compile(lhs, rhs))
+                else:
+                    fn_compile = torch.compile(fn)
+                    out_jit = tensor2ndarray(fn_compile(*list(inp_converted.values())))
                 save_kwargs[f"out_torch_inductor_{device}"] = out_jit
 
         if save_kwargs:

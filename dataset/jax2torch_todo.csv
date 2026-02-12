@@ -77,7 +77,6 @@ jax.lax.switch,None,other,多分支控制流 primitive,
 jax.lax.while_loop,None,other,while 循环 primitive,
 jax.lax.with_sharding_constraint,None,other,分片约束,
 
-
 jax.lax.rng_uniform,None,other,均匀随机数,不同设备、框架使用伪随机数生成算法
 jax.lax.getattr,getattr,other,属性读取,
 jax.lax.pbroadcast,torch.distributed.broadcast,other,跨设备广播,
@@ -90,7 +89,6 @@ jax.lax.scatter_min,torch.ops.aten.scatter_reduce_.two,other,散射最小,
 jax.lax.scatter_mul,torch.ops.aten.scatter_reduce_.two,other,散射乘,
 jax.lax.create_token,torch.ops.aten._make_dep_token,other,创建依赖 token（内部接口）,
 
-
 jax.lax.betainc,None,elementwise,不完全贝塔函数,
 jax.lax.bitwise_and,torch.ops.aten.bitwise_and.Tensor,elementwise,按位与,位运算不支持浮点类型
 jax.lax.bitwise_not,torch.ops.aten.bitwise_not.default,elementwise,按位非,位运算不支持浮点类型
@@ -100,3 +98,5 @@ jax.lax.convert_element_type,torch.ops.prims.convert_element_type.default,elemen
 jax.lax.imag,torch.ops.aten.imag.default,elementwise,取虚部,只支持 subtypes of complexfloating
 jax.lax.real,torch.ops.aten.real.default,elementwise,取实部,只支持 subtypes of complexfloating
 jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,jax.lax.fft 可以通过传参数对应多种傅里叶、torch里每种傅里叶都有对应的算子
+jax.lax.dot_general,torch.ops.aten.einsum.default,other,通用点积,jax.lax.dot的别名、马上要被取消了
+jax.lax.batch_matmul,torch.ops.aten.bmm.default,other,批量矩阵乘,调用的其实是 jax.lax.dot_general

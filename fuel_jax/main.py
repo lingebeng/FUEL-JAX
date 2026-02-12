@@ -48,7 +48,7 @@ def gen(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for op in ops:
-        inputs = gen.generate(op, shape=parse_shape(shape))
+        inputs = gen.generate(op, shape=parse_shape(shape), case_id=test_id)
         if op_name == "all":
             out_path = out_dir / op / f"{str(test_id).zfill(2)}.npz"
         else:

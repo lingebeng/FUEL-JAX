@@ -199,3 +199,9 @@ other:
   - op_name: jax.lax.sort
     input: [operand]
     generation: {operand: *strat_normal}
+  - op_name: jax.lax.dot
+    input: [lhs, rhs]
+    generation: {lhs: *strat_normal, rhs: *strat_normal}
+    shape_policy:
+      name: matmul_compatible
+      fuzz: true

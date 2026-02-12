@@ -15,6 +15,13 @@ from ..utils.utils import (
 )
 
 
+def _dot_dimension_numbers(lhs_ndim: int, rhs_ndim: int):
+    if lhs_ndim == 3 and rhs_ndim == 3:
+        # (b, m, k) x (b, k, n) -> (b, m, n)
+        return (((2,), (1,)), ((0,), (0,)))
+    return None
+
+
 def main(
     jax_op: str = typer.Option(
         None, help="Operator name (mapped to torch via jax2torch_map.csv)"
@@ -59,11 +66,30 @@ def main(
 
     try:
         save_kwargs = {}
-        out = Array2ndarray(fn(**inp))
+        if op_name == "jax.lax.dot":
+            dnums = _dot_dimension_numbers(inp["lhs"].ndim, inp["rhs"].ndim)
+            if dnums is None:
+                out = Array2ndarray(fn(**inp))
+            else:
+                out = Array2ndarray(fn(inp["lhs"], inp["rhs"], dimension_numbers=dnums))
+        else:
+            out = Array2ndarray(fn(**inp))
         save_kwargs[f"out_jax_{device}"] = out
         if compile_flag:
-            fn_compile = jax.jit(fn)
-            out_jit = Array2ndarray(fn_compile(**inp))
+            if op_name == "jax.lax.dot":
+                dnums = _dot_dimension_numbers(inp["lhs"].ndim, inp["rhs"].ndim)
+                if dnums is None:
+                    fn_compile = jax.jit(fn)
+                    out_jit = Array2ndarray(fn_compile(**inp))
+                else:
+                    # Keep dimension_numbers static for JIT to avoid tracer int conversion.
+                    fn_compile = jax.jit(
+                        lambda lhs, rhs: fn(lhs, rhs, dimension_numbers=dnums)
+                    )
+                    out_jit = Array2ndarray(fn_compile(inp["lhs"], inp["rhs"]))
+            else:
+                fn_compile = jax.jit(fn)
+                out_jit = Array2ndarray(fn_compile(**inp))
             save_kwargs[f"out_jax_xla_{device}"] = out_jit
 
         if save_kwargs:
