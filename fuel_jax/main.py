@@ -1,6 +1,7 @@
 from pathlib import Path
 import typer
 from loguru import logger
+import re
 
 from .config.config import ROOT_DIR, PRECISION_MAP
 from .difftesting.validate import _validate
@@ -9,6 +10,7 @@ from .utils.utils import (
     parse_shape,
     get_dir_list,
     load_jax2torch_map,
+    read_csv,
     RECORD,
     list_ops,
 )
@@ -22,6 +24,15 @@ from .config.config import (
 app = typer.Typer()
 
 JAX2TORCH_MAP = load_jax2torch_map()
+JAX2TORCH_ROWS = {
+    row["jax"]: row for row in read_csv(ROOT_DIR / "dataset" / "jax2torch_map.csv")
+}
+
+
+def _parse_unsupported_precisions(text: str | None) -> set[str]:
+    if not text:
+        return set()
+    return {p.strip() for p in re.split(r"[、,;\\s]+", text) if p and p.strip()}
 
 
 @app.command()
@@ -90,11 +101,49 @@ def exec(
             RECORD(ExecErrorLogger, f"Missing input for {op}: {input_file}\n")
             logger.warning(f"Missing input for {op}: {input_file}")
             continue
+        op_row = JAX2TORCH_ROWS.get(op, {})
+        jax_unsupported = _parse_unsupported_precisions(
+            op_row.get("jax 不支持精度", "")
+        )
+        torch_unsupported = _parse_unsupported_precisions(
+            op_row.get("torch 不支持精度", "")
+        )
+        torch_op = JAX2TORCH_MAP.get(op)
+        if device != "tpu" and not torch_op:
+            RECORD(ExecErrorLogger, f"Missing torch mapping for {op}, skipping.\n")
+            logger.warning(f"Missing torch mapping for {op}, skipping.")
+            continue
         for precision in precisions:
+            if device == "tpu":
+                if precision in jax_unsupported:
+                    msg = (
+                        f"Skip {op} on jax-{device}-{precision}: "
+                        f"precision marked unsupported in csv."
+                    )
+                    RECORD(ExecErrorLogger, msg)
+                    logger.info(msg)
+                    continue
+                _exec(op, op, "jax", precision, device, mode, test_id)
+                continue
+
+            # On cpu/gpu we run only comparable precisions supported by BOTH JAX and Torch.
+            if precision in jax_unsupported or precision in torch_unsupported:
+                reason = []
+                if precision in jax_unsupported:
+                    reason.append("jax unsupported")
+                if precision in torch_unsupported:
+                    reason.append("torch unsupported")
+                msg = (
+                    f"Skip {op} on {device}-{precision}: "
+                    + ", ".join(reason)
+                    + " (from csv)."
+                )
+                RECORD(ExecErrorLogger, msg)
+                logger.info(msg)
+                continue
+
             _exec(op, op, "jax", precision, device, mode, test_id)
-            if device != "tpu":
-                torch_op = JAX2TORCH_MAP.get(op)
-                _exec(op, torch_op, "torch", precision, device, mode, test_id)
+            _exec(op, torch_op, "torch", precision, device, mode, test_id)
 
 
 @app.command()
