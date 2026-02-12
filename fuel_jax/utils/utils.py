@@ -50,6 +50,8 @@ def ndarray2Array(arr: np.ndarray, dtype=None):
 
 def tensor2ndarray(tensor):
     # @haifeng only tensor cpu can transform ndarray
+    if type(tensor) is tuple:
+        tensor = tensor[0]
     tensor = tensor.detach().to("cpu").to(torch.float32).numpy()
     return np.array(tensor, dtype=np.float32)
 

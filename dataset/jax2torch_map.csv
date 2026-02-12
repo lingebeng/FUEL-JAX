@@ -118,5 +118,4 @@ jax.lax.conv_transpose,torch.ops.aten.conv_transpose2d.input,other,转置卷积,
 jax.lax.conv_with_general_padding,torch.ops.aten.conv2d.default,other,通用填充卷积,,
 jax.lax.dot,torch.ops.aten.matmul.default,other,点积/矩阵乘,,
 jax.lax.dot_general,torch.ops.aten.einsum.default,other,通用点积,,
-jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,,
-jax.lax.sort,torch.ops.aten.sort.default,other,排序,,
+jax.lax.sort,torch.ops.aten.sort.default,other,排序,,FP8_E4M3、FP8_E5M2

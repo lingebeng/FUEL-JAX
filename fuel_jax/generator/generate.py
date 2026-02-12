@@ -14,7 +14,7 @@ class Generator:
         self.rng = np.random.default_rng(seed)
         self.rule = load_yaml(rules_path)
 
-    def generate(self, op_name: str, shape: tuple = (4, 8)):
+    def generate(self, op_name: str, shape: tuple = (64, 64)):
         entry = self._get_entry(op_name)
         inputs = {}
         for inp in entry.get("input", []):
@@ -25,6 +25,10 @@ class Generator:
     def _get_entry(self, op_name: str) -> dict:
 
         for entry in self.rule.get("elementwise", []):
+            if entry["op_name"] == op_name:
+                return entry
+
+        for entry in self.rule.get("other", []):
             if entry["op_name"] == op_name:
                 return entry
         raise ValueError(f"Operator '{op_name}' not found in rules.")

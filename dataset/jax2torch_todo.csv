@@ -99,3 +99,4 @@ jax.lax.bitwise_xor,torch.ops.aten.bitwise_xor.Tensor,elementwise,按位异或,�
 jax.lax.convert_element_type,torch.ops.prims.convert_element_type.default,elementwise,元素类型转换,类型转换没必要比较
 jax.lax.imag,torch.ops.aten.imag.default,elementwise,取虚部,只支持 subtypes of complexfloating
 jax.lax.real,torch.ops.aten.real.default,elementwise,取实部,只支持 subtypes of complexfloating
+jax.lax.fft,torch.ops.aten.fft_fft.default,other,快速傅里叶变换,jax.lax.fft 可以通过传参数对应多种傅里叶、torch里每种傅里叶都有对应的算子

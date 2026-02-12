@@ -195,4 +195,7 @@ elementwise:
 reduction: []
 linalg: []
 array: []
-other: []
+other:
+  - op_name: jax.lax.sort
+    input: [operand]
+    generation: {operand: *strat_normal}

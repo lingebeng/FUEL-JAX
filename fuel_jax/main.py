@@ -33,14 +33,15 @@ def gen(
         None, help="Output .npz file (single op) or directory (all ops)"
     ),
     seed: int = typer.Option(0, help="Random seed"),
-    shape: str = typer.Option("4,8", help="Shape like '2,3' or 'scalar'"),
+    shape: str = typer.Option("64,64", help="Shape like '2,3' or 'scalar'"),
     test_id: int = typer.Option(0, help="Test ID for file naming"),
 ) -> None:
     gen = Generator(seed=seed)
+    type_name = "other"
     ops = (
         [op_name]
         if op_name != "all"
-        else [entry["op_name"] for entry in gen.rule.get("elementwise", [])]
+        else [entry["op_name"] for entry in gen.rule.get(type_name, [])]
     )
 
     out_dir = ROOT_DIR / "input"
