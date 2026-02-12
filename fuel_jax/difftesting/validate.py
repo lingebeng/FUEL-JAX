@@ -24,6 +24,7 @@ def testing(
         result = evaluate_diff(
             x,
             y,
+            precision=precision,
             atol=atol,
             rtol=rtol,
             criteria=DIFF_ORACLE_THRESHOLDS[precision],
