@@ -154,7 +154,7 @@ def main(
         if v.shape == ():
             if k in ("axis", "index_dtype"):
                 v = int(v)
-            elif np.issubdtype(v.dtype, np.floating):
+            elif np.issubdtype(v.dtype, np.floating) or op_name == "jax.lax.polygamma":
                 v = v.astype(target_dtype)
             else:
                 v = int(v)
