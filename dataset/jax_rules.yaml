@@ -192,23 +192,22 @@ elementwise:
 # ----------------------------------------------------------------------------
 # 1.2 Reduction / Linalg / Array / Other
 # ----------------------------------------------------------------------------
-reduction: []
-linalg:
+reduction:
   - op_name: jax.lax.argmax
     input: [operand, axis, index_dtype]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
+        strategy: axis
+        from_input: operand
       index_dtype: *strat_int_scalar
   - op_name: jax.lax.argmin
     input: [operand, axis, index_dtype]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
+        strategy: axis
+        from_input: operand
       index_dtype: *strat_int_scalar
 
   - op_name: jax.lax.cumlogsumexp
@@ -216,40 +215,78 @@ linalg:
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
+        strategy: axis
+        from_input: operand
   - op_name: jax.lax.cummax
     input: [operand, axis]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
-
+        strategy: axis
+        from_input: operand
   - op_name: jax.lax.cummin
     input: [operand, axis]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
-
+        strategy: axis
+        from_input: operand
   - op_name: jax.lax.cumprod
     input: [operand, axis]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
-
+        strategy: axis
+        from_input: operand
   - op_name: jax.lax.cumsum
     input: [operand, axis]
     generation:
       operand: *strat_normal
       axis:
-        <<: *strat_int_scalar
-        range: [0,2]
+        strategy: axis
+        from_input: operand
 
+  - op_name: jax.lax.reduce_max
+    input: [operand, axes]
+    generation:
+      operand: *strat_normal
+      axes:
+        strategy: axes_tuple
+        min_len: 1
+        sorted: true
+  - op_name: jax.lax.reduce_min
+    input: [operand, axes]
+    generation:
+      operand: *strat_normal
+      axes:
+        strategy: axes_tuple
+        min_len: 1
+        sorted: true
+  - op_name: jax.lax.reduce_sum
+    input: [operand, axes]
+    generation:
+      operand: *strat_normal
+      axes:
+        strategy: axes_tuple
+        min_len: 1
+        sorted: true
+  - op_name: jax.lax.reduce_prod
+    input: [operand, axes]
+    generation:
+      operand: *strat_normal
+      axes:
+        strategy: axes_tuple
+        min_len: 1
+        sorted: true
+  - op_name: jax.lax.top_k
+    input: [operand, k]
+    generation:
+      operand: *strat_normal
+      k:
+        <<: *strat_int_scalar
+        range: [1,1]
+
+linalg: []
 array: []
 other:
   - op_name: jax.lax.sort

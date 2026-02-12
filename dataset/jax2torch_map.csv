@@ -68,13 +68,11 @@ jax.lax.cummax,torch.ops.aten.cummax.default,reduction,累积最大值,,FP8_E4M3
 jax.lax.cummin,torch.ops.aten.cummin.default,reduction,累积最小值,,FP8_E4M3、FP8_E5M2
 jax.lax.cumprod,torch.ops.aten.cumprod.default,reduction,累积乘积,,FP8_E4M3、FP8_E5M2
 jax.lax.cumsum,torch.ops.aten.cumsum.default,reduction,累积和,,FP8_E4M3、FP8_E5M2
-jax.lax.reduce_and,torch.ops.aten.all.default,reduction,逻辑与归约,,
-jax.lax.reduce_max,torch.ops.aten.amax.default,reduction,最大值归约,,
-jax.lax.reduce_min,torch.ops.aten.amin.default,reduction,最小值归约,,
-jax.lax.reduce_or,torch.ops.aten.any.default,reduction,逻辑或归约,,
-jax.lax.reduce_prod,torch.ops.aten.prod.default,reduction,乘积归约,,
-jax.lax.reduce_sum,torch.ops.aten.sum.default,reduction,求和归约,,
-jax.lax.top_k,torch.ops.aten.topk.default,reduction,Top-K,,
+jax.lax.reduce_max,torch.ops.aten.amax.default,reduction,最大值归约,,FP8_E4M3、FP8_E5M2
+jax.lax.reduce_min,torch.ops.aten.amin.default,reduction,最小值归约,,FP8_E4M3、FP8_E5M2
+jax.lax.reduce_sum,torch.ops.aten.sum.default,reduction,求和归约,,FP8_E4M3、FP8_E5M2
+jax.lax.reduce_prod,torch.ops.aten.prod.default,reduction,乘积归约,,FP8_E4M3、FP8_E5M2
+jax.lax.top_k,torch.ops.aten.topk.default,reduction,Top-K,,FP8_E4M3、FP8_E5M2
 jax.lax.cholesky,torch.ops.aten.linalg_cholesky.default,linalg,Cholesky 分解,,
 jax.lax.eig,torch.ops.aten.linalg_eig.default,linalg,特征分解,,
 jax.lax.eigh,torch.ops.aten.linalg_eigh.default,linalg,对称/厄米特特征分解,,

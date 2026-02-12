@@ -24,7 +24,12 @@ class Generator:
         entry = self._get_entry(op_name)
         inputs = {}
         for inp in entry.get("input", []):
-            arr = self._make_array(entry["generation"][inp], shape)
+            arr = self._make_array(
+                entry["generation"][inp],
+                shape,
+                case_id=case_id,
+                generated_inputs=inputs,
+            )
             inputs[inp] = arr
         return inputs
 
@@ -78,7 +83,13 @@ class Generator:
             "rhs": self._make_array(rhs_spec, rhs_shape),
         }
 
-    def _make_array(self, input_spec: dict, shape: tuple):
+    def _make_array(
+        self,
+        input_spec: dict,
+        shape: tuple,
+        case_id: int | None = None,
+        generated_inputs: dict | None = None,
+    ):
         strategy = input_spec.get("strategy", "uniform")
 
         if strategy == "uniform":
@@ -109,6 +120,66 @@ class Generator:
             mean = input_spec.get("mean", 0.0)
             std = input_spec.get("std", 1.0)
             return self.rng.normal(loc=mean, scale=std, size=shape).astype(np.float32)
+
+        if strategy == "axis":
+            ref_name = input_spec.get("from_input", "operand")
+            ref = None if generated_inputs is None else generated_inputs.get(ref_name)
+            if ref is None:
+                ndim = len(self._normalize_shape_hint(shape))
+            else:
+                ndim = int(np.asarray(ref).ndim)
+
+            if ndim <= 0:
+                return np.array(0, dtype=np.int64)
+
+            if case_id is not None:
+                mode = int(case_id % 3)
+                if mode == 0:
+                    axis = 0
+                elif mode == 1:
+                    axis = ndim - 1
+                else:
+                    axis = ndim // 2
+            else:
+                axis = int(self.rng.integers(0, ndim))
+
+            return np.array(axis, dtype=np.int64)
+
+        if strategy == "axes_tuple":
+            shape = self._normalize_shape_hint(shape)
+            ndim = len(shape)
+            if ndim == 0:
+                return np.array([], dtype=np.int64)
+
+            min_len = int(input_spec.get("min_len", 1))
+            max_len = int(input_spec.get("max_len", ndim))
+            min_len = max(1, min_len)
+            max_len = min(ndim, max(1, max_len))
+            if max_len < min_len:
+                max_len = min_len
+
+            # Fixed coverage when case_id is provided.
+            if case_id is not None:
+                mode = int(case_id % 4)
+                if mode == 0:
+                    axes = [0]
+                elif mode == 1:
+                    axes = [ndim - 1]
+                elif mode == 2 and ndim >= 2:
+                    axes = [0, ndim - 1]
+                else:
+                    axes = list(range(ndim))
+            else:
+                k = int(self.rng.integers(min_len, max_len + 1))
+                axes = self.rng.choice(ndim, size=k, replace=False).tolist()
+
+            if bool(input_spec.get("sorted", True)):
+                axes = sorted(set(int(a) for a in axes))
+            else:
+                # Keep order while de-duplicating.
+                axes = list(dict.fromkeys(int(a) for a in axes))
+
+            return np.array(axes, dtype=np.int64)
 
         raise ValueError(f"Unknown strategy: {strategy}")
 

@@ -37,7 +37,7 @@ def gen(
     test_id: int = typer.Option(0, help="Test ID for file naming"),
 ) -> None:
     gen = Generator(seed=seed)
-    type_name = "other"
+    type_name = "reduction"
     ops = (
         [op_name]
         if op_name != "all"

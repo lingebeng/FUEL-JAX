@@ -103,6 +103,8 @@ jax.lax.bitwise_and,torch.ops.aten.bitwise_and.Tensor,elementwise,按位与,位�
 jax.lax.bitwise_not,torch.ops.aten.bitwise_not.default,elementwise,按位非,位运算不支持浮点类型
 jax.lax.bitwise_or,torch.ops.aten.bitwise_or.Tensor,elementwise,按位或,位运算不支持浮点类型
 jax.lax.bitwise_xor,torch.ops.aten.bitwise_xor.Tensor,elementwise,按位异或,位运算不支持浮点类型
+jax.lax.reduce_and,torch.ops.aten.all.default,reduction,逻辑与归约,位运算不支持浮点类型
+jax.lax.reduce_or,torch.ops.aten.any.default,reduction,逻辑或归约,位运算不支持浮点类型
 jax.lax.convert_element_type,torch.ops.prims.convert_element_type.default,elementwise,元素类型转换,类型转换没必要比较
 jax.lax.imag,torch.ops.aten.imag.default,elementwise,取虚部,只支持 subtypes of complexfloating
 jax.lax.real,torch.ops.aten.real.default,elementwise,取实部,只支持 subtypes of complexfloating
