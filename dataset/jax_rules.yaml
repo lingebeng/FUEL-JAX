@@ -193,7 +193,24 @@ elementwise:
 # 1.2 Reduction / Linalg / Array / Other
 # ----------------------------------------------------------------------------
 reduction: []
-linalg: []
+linalg:
+  - op_name: jax.lax.argmax
+    input: [operand, axis, index_dtype]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+      index_dtype: *strat_int_scalar
+  - op_name: jax.lax.argmin
+    input: [operand, axis, index_dtype]
+    generation:
+      operand: *strat_normal
+      axis:
+        <<: *strat_int_scalar
+        range: [0,2]
+      index_dtype: *strat_int_scalar
+
 array: []
 other:
   - op_name: jax.lax.sort

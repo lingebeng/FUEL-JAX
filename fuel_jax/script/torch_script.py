@@ -59,7 +59,6 @@ def main(
     dtype_str = PRECISION_MAP[precision]["torch"]
 
     target_device = get_torch_device(device=device)
-    inp_converted = {}
     for k, v in inp.items():
         if v.shape == ():
             if v.dtype == np.float64:
@@ -71,19 +70,24 @@ def main(
                     v = int(v)
         else:
             v = ndarray2tensor(v, dtype=eval(dtype_str)).to(target_device)
-        inp_converted[k] = v
+        inp[k] = v
     op_suffix = op_name.split(".", 1)[1]
+
+    if jax_op in ("jax.lax.argmax", "jax.lax.argmin"):
+        inp["axis"] = min(inp["axis"], inp["operand"].ndim - 1)
+        del inp["index_dtype"]
+
     fn = _resolve_dotted(torch, op_suffix)
 
     try:
         save_kwargs = {}
         if jax_op == "jax.lax.dot" and op_name == "torch.ops.aten.einsum.default":
-            lhs = inp_converted["lhs"]
-            rhs = inp_converted["rhs"]
+            lhs = inp["lhs"]
+            rhs = inp["rhs"]
             eq = _dot_einsum_equation(lhs, rhs)
             out = tensor2ndarray(fn(eq, [lhs, rhs]))
         else:
-            out = tensor2ndarray(fn(*list(inp_converted.values())))
+            out = tensor2ndarray(fn(*list(inp.values())))
         save_kwargs[f"out_torch_{device}"] = out
         if compile_flag:
             if fn is not None:
@@ -91,8 +95,8 @@ def main(
                     jax_op == "jax.lax.dot"
                     and op_name == "torch.ops.aten.einsum.default"
                 ):
-                    lhs = inp_converted["lhs"]
-                    rhs = inp_converted["rhs"]
+                    lhs = inp["lhs"]
+                    rhs = inp["rhs"]
                     eq = _dot_einsum_equation(lhs, rhs)
 
                     def _dot_einsum_impl(a, b):
@@ -102,7 +106,7 @@ def main(
                     out_jit = tensor2ndarray(fn_compile(lhs, rhs))
                 else:
                     fn_compile = torch.compile(fn)
-                    out_jit = tensor2ndarray(fn_compile(*list(inp_converted.values())))
+                    out_jit = tensor2ndarray(fn_compile(*list(inp.values())))
                 save_kwargs[f"out_torch_inductor_{device}"] = out_jit
 
         if save_kwargs:

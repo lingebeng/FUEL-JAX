@@ -61,10 +61,8 @@ jax.lax.sub,torch.ops.aten.sub.Tensor,elementwise,减法,,FP8_E4M3、FP8_E5M2
 jax.lax.tan,torch.ops.aten.tan.default,elementwise,正切,,FP8_E4M3、FP8_E5M2
 jax.lax.tanh,torch.ops.aten.tanh.default,elementwise,双曲正切,,FP8_E4M3、FP8_E5M2
 jax.lax.zeta,torch.ops.aten.special_zeta.default,elementwise,黎曼ζ函数,,BF16、FP8_E4M3、FP8_E5M2
-jax.lax.approx_max_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最大值,,
-jax.lax.approx_min_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最小值,,
-jax.lax.argmax,torch.ops.aten.argmax.default,reduction,最大值索引,,
-jax.lax.argmin,torch.ops.aten.argmin.default,reduction,最小值索引,,
+jax.lax.argmax,torch.ops.aten.argmax.default,reduction,最大值索引,,FP8_E4M3、FP8_E5M2
+jax.lax.argmin,torch.ops.aten.argmin.default,reduction,最小值索引,,FP8_E4M3、FP8_E5M2
 jax.lax.cumlogsumexp,torch.ops.aten.logcumsumexp.default,reduction,累积 log-sum-exp,,
 jax.lax.cummax,torch.ops.aten.cummax.default,reduction,累积最大值,,
 jax.lax.cummin,torch.ops.aten.cummin.default,reduction,累积最小值,,
@@ -86,6 +84,5 @@ jax.lax.lu,torch.ops.aten.linalg_lu.default,linalg,LU 分解,,
 jax.lax.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,,
 jax.lax.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,,
 jax.lax.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,,
-
 jax.lax.dot,torch.ops.aten.einsum.default,other,点积/矩阵乘,,
 jax.lax.sort,torch.ops.aten.sort.default,other,排序,,FP8_E4M3、FP8_E5M2

@@ -76,6 +76,9 @@ jax.lax.stop_gradient,None,other,Custom gradient operators,
 jax.lax.switch,None,other,多分支控制流 primitive,
 jax.lax.while_loop,None,other,while 循环 primitive,
 jax.lax.with_sharding_constraint,None,other,分片约束,
+jax.lax.approx_max_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最大值, 没有、专门为 tpu 设计
+jax.lax.approx_min_k,torch.ops.aten.topk.default,reduction,近似 Top-K 最小值, 没有、专门为 tpu 设计
+
 
 jax.lax.rng_uniform,None,other,均匀随机数,不同设备、框架使用伪随机数生成算法
 jax.lax.getattr,getattr,other,属性读取,匹配度有待商榷
@@ -93,6 +96,7 @@ jax.lax.conv_general_dilated,torch.ops.aten.conv2d.default,other,通用空洞卷
 jax.lax.conv_general_dilated_patches,torch.ops.aten.unfold.default,other,提取卷积补丁,匹配度有待商榷
 jax.lax.conv_transpose,torch.ops.aten.conv_transpose2d.input,other,转置卷积,匹配度有待商榷
 jax.lax.conv_with_general_padding,torch.ops.aten.conv2d.default,other,通用填充卷积,匹配度有待商榷
+
 
 jax.lax.betainc,None,elementwise,不完全贝塔函数,
 jax.lax.bitwise_and,torch.ops.aten.bitwise_and.Tensor,elementwise,按位与,位运算不支持浮点类型

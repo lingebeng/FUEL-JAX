@@ -61,6 +61,10 @@ def main(
             )
         inp[k] = v
 
+    if op_name in ("jax.lax.argmax", "jax.lax.argmin"):
+        inp["axis"] = min(inp["axis"], inp["operand"].ndim - 1)
+        inp["index_dtype"] = jnp.int32
+
     op_suffix = op_name.split(".", 1)[1]
     fn = _resolve_dotted(jax, op_suffix)
 
@@ -87,6 +91,9 @@ def main(
                         lambda lhs, rhs: fn(lhs, rhs, dimension_numbers=dnums)
                     )
                     out_jit = Array2ndarray(fn_compile(inp["lhs"], inp["rhs"]))
+            elif op_name in ("jax.lax.argmax", "jax.lax.argmin"):
+                fn_compile = jax.jit(fn, static_argnames=("axis", "index_dtype"))
+                out_jit = Array2ndarray(fn_compile(**inp))
             else:
                 fn_compile = jax.jit(fn)
                 out_jit = Array2ndarray(fn_compile(**inp))
