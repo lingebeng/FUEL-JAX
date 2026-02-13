@@ -118,3 +118,20 @@ DIFF_ORACLE_THRESHOLDS: dict[str, dict[str, dict[str, float | int]]] = {
 
 ExecErrorLogger = ROOT_DIR / "EXEC.log"
 ValidateInfoLogger = ROOT_DIR / "VALIDATE.log"
+
+AXIS_OPS = {
+    "jax.lax.argmax",
+    "jax.lax.argmin",
+    "jax.lax.cumlogsumexp",
+    "jax.lax.cummax",
+    "jax.lax.cummin",
+    "jax.lax.cumprod",
+    "jax.lax.cumsum",
+}
+
+AXES_OPS = {
+    "jax.lax.reduce_max",
+    "jax.lax.reduce_min",
+    "jax.lax.reduce_sum",
+    "jax.lax.reduce_prod",
+}

@@ -1,8 +1,14 @@
 # FUEL-JAX
 
-面向 JAX / PyTorch 的底层算子差分测试框架（输入生成 -> 执行 -> 指标验证）。
+面向 JAX / PyTorch 的底层算子差分测试框架（输入生成 -> 多框架、设备执行 -> 差分验证）。
 
 ![framework](assets/image.png)
+
+## TODO
+- [ ] 完善 Oracle 规则
+- [ ] 完善 矩阵乘法的 shape 生成策略
+- [ ] 实现 Mutate 策略
+- [ ] 深入算子底层，详细剖析不一致原因，寻求合理解释
 
 ## 功能概览
 
@@ -89,7 +95,7 @@ uv sync
 │   │   └── 🧾 validate.py           # 结果聚合与两两差分验证
 │   ├── 📂 generator/
 │   │   ├── 🧾 generate.py           # 输入生成核心（按 jax_rules.yaml 产出 npz）
-│   │   └── 🧾 mutate.py             # 输入扰动/变异策略
+│   │   └── 🧾 mutate.py             # 输入扰动/变异策略(TODO @haifeng)
 │   ├── 📂 script/
 │   │   ├── 🧾 jax_script.py         # JAX 侧单算子执行入口（含 jit/static 参数处理）
 │   │   └── 🧾 torch_script.py       # Torch 侧单算子执行入口（含映射适配）

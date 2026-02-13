@@ -151,9 +151,6 @@ def _resolve_dotted(obj, dotted: str) -> Callable[..., Any] | Any:
     return obj
 
 
-AX2TORCH_MAP: Dict[str, str] | None = None
-
-
 def load_jax2torch_map(
     map_path: Path = ROOT_DIR / "dataset" / "jax2torch_map.csv",
 ) -> Dict[str, str]:

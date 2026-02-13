@@ -3,7 +3,7 @@ import typer
 import numpy as np
 from pathlib import Path
 from loguru import logger
-from ..config.config import PRECISION_MAP, ROOT_DIR
+from ..config.config import PRECISION_MAP, ROOT_DIR, AXIS_OPS
 from ..utils.utils import (
     save_npz,
     load_npz,
@@ -30,24 +30,6 @@ def _dot_einsum_equation(lhs: torch.Tensor, rhs: torch.Tensor) -> str:
     )
 
 
-_AXIS_OPS = {
-    "jax.lax.argmax",
-    "jax.lax.argmin",
-    "jax.lax.cumlogsumexp",
-    "jax.lax.cummax",
-    "jax.lax.cummin",
-    "jax.lax.cumprod",
-    "jax.lax.cumsum",
-}
-
-_AXES_OPS = {
-    "jax.lax.reduce_max",
-    "jax.lax.reduce_min",
-    "jax.lax.reduce_sum",
-    "jax.lax.reduce_prod",
-}
-
-
 def _normalize_axes(inp: dict) -> None:
     if "axes" not in inp:
         return
@@ -61,7 +43,7 @@ def _normalize_axes(inp: dict) -> None:
 
 
 def _normalize_axis(inp: dict, jax_op: str) -> None:
-    if jax_op not in _AXIS_OPS:
+    if jax_op not in AXIS_OPS:
         return
     inp["axis"] = min(int(inp["axis"]), inp["operand"].ndim - 1)
     if "index_dtype" in inp:

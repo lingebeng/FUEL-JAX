@@ -4,7 +4,7 @@ import typer
 import numpy as np
 from pathlib import Path
 from loguru import logger
-from ..config.config import PRECISION_MAP, ROOT_DIR
+from ..config.config import PRECISION_MAP, ROOT_DIR, AXES_OPS, AXIS_OPS
 from ..utils.utils import (
     save_npz,
     load_npz,
@@ -22,32 +22,14 @@ def _dot_dimension_numbers(lhs_ndim: int, rhs_ndim: int):
     return None
 
 
-_AXIS_OPS = {
-    "jax.lax.argmax",
-    "jax.lax.argmin",
-    "jax.lax.cumlogsumexp",
-    "jax.lax.cummax",
-    "jax.lax.cummin",
-    "jax.lax.cumprod",
-    "jax.lax.cumsum",
-}
-
-_AXES_OPS = {
-    "jax.lax.reduce_max",
-    "jax.lax.reduce_min",
-    "jax.lax.reduce_sum",
-    "jax.lax.reduce_prod",
-}
-
-
 def _static_argnames(op_name: str) -> tuple[str, ...]:
     if op_name in ("jax.lax.argmax", "jax.lax.argmin"):
         return ("axis", "index_dtype")
     if op_name == "jax.lax.top_k":
         return ("k",)
-    if op_name in _AXIS_OPS:
+    if op_name in AXIS_OPS:
         return ("axis",)
-    if op_name in _AXES_OPS:
+    if op_name in AXES_OPS:
         return ("axes",)
     return ()
 
@@ -65,7 +47,7 @@ def _normalize_axes(inp: dict) -> None:
 
 
 def _normalize_axis(inp: dict, op_name: str) -> None:
-    if op_name not in _AXIS_OPS:
+    if op_name not in AXIS_OPS:
         return
     inp["axis"] = min(int(inp["axis"]), inp["operand"].ndim - 1)
     if "index_dtype" in inp:

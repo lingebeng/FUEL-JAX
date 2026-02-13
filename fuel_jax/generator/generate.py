@@ -52,8 +52,8 @@ class Generator:
         elif len(shape) == 1:
             m = k = shape[0]
         else:
-            m = int(self.rng.integers(2, 9))
-            k = int(self.rng.integers(2, 9))
+            m = int(self.rng.integers(64, 128))
+            k = int(self.rng.integers(64, 128))
         n = int(self.rng.integers(1, max(3, 2 * k) + 1))
         b = int(self.rng.integers(1, 5))
         return m, k, n, b
@@ -76,7 +76,7 @@ class Generator:
         # If case_id is provided (e.g. using test_id), coverage is deterministic.
         mode = int(case_id % 5) if case_id is not None else int(self.rng.integers(0, 5))
         if mode == 0:
-            lhs_shape, rhs_shape = (k,), (k,)
+            lhs_shape, rhs_shape = (b, m, k), (b, k, n)
         elif mode == 1:
             lhs_shape, rhs_shape = (m, k), (k,)
         elif mode == 2:
@@ -84,7 +84,7 @@ class Generator:
         elif mode == 3:
             lhs_shape, rhs_shape = (m, k), (k, n)
         else:
-            lhs_shape, rhs_shape = (b, m, k), (b, k, n)
+            lhs_shape, rhs_shape = (k,), (k,)
 
         return {
             "lhs": self._make_array(lhs_spec, lhs_shape),
