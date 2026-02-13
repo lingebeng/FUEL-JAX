@@ -1,0 +1,16 @@
+resources:
+  accelerators: tpu-v6e-1 #
+  accelerator_args:
+    tpu_vm: True
+    runtime_version: v2-alpha-tpuv6e # optional
+
+workdir: ~/Program/FUEL-JAX/
+
+file_mounts:
+  ~/.ssh/id_rsa: ~/.ssh/id_rsa
+setup: |
+  chmod 600 ~/.ssh/id_rsa
+  rm ~/.ssh/config
+
+run: |
+  cd ~/sky_workdir

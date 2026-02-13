@@ -1,5 +1,5 @@
 jax,pytorch,type,remark,jax 不支持精度,torch 不支持精度
-jax.lax.abs,torch.ops.aten.abs.default,elementwise,绝对值,,
+jax.lax.abs,torch.ops.aten.abs.default,elementwise,绝对值(torch cuda 不支持 FP8_E4M3、FP8_E5M2),,
 jax.lax.acos,torch.ops.aten.acos.default,elementwise,反余弦,,FP8_E4M3、FP8_E5M2
 jax.lax.acosh,torch.ops.aten.acosh.default,elementwise,反双曲余弦,,FP8_E4M3、FP8_E5M2
 jax.lax.add,torch.ops.aten.add.Tensor,elementwise,加法,,FP8_E4M3、FP8_E5M2
@@ -31,7 +31,7 @@ jax.lax.gt,torch.ops.aten.gt.Tensor,elementwise,大于比较,,FP8_E4M3、FP8_E5M
 jax.lax.igamma,torch.special.gammainc,elementwise,下不完全伽玛函数,,FP8_E4M3、FP8_E5M2
 jax.lax.igammac,torch.special.gammaincc,elementwise,上不完全伽玛函数,,FP8_E4M3、FP8_E5M2
 jax.lax.integer_pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,整数幂,,FP8_E4M3、FP8_E5M2
-jax.lax.is_finite,torch.ops.aten.isfinite.default,elementwise,是否为有限值,,FP8_E4M3
+jax.lax.is_finite,torch.ops.aten.isfinite.default,elementwise,是否为有限值(torch cuda 不支持FP8_E5M2),,FP8_E4M3
 jax.lax.le,torch.ops.aten.le.Tensor,elementwise,小于等于比较,,FP8_E4M3、FP8_E5M2
 jax.lax.lgamma,torch.ops.aten.lgamma.default,elementwise,伽玛函数对数,,FP8_E4M3、FP8_E5M2
 jax.lax.log,torch.ops.aten.log.default,elementwise,自然对数,,FP8_E4M3、FP8_E5M2
@@ -40,7 +40,7 @@ jax.lax.logistic,torch.ops.aten.sigmoid.default,elementwise,Sigmoid/逻辑函数
 jax.lax.lt,torch.ops.aten.lt.Tensor,elementwise,小于比较,,FP8_E4M3、FP8_E5M2
 jax.lax.max,torch.ops.aten.maximum.default,elementwise,逐元素最大值,,FP8_E4M3、FP8_E5M2
 jax.lax.min,torch.ops.aten.minimum.default,elementwise,逐元素最小值,,FP8_E4M3、FP8_E5M2
-jax.lax.mul,torch.ops.aten.mul.Tensor,elementwise,乘法,,
+jax.lax.mul,torch.ops.aten.mul.Tensor,elementwise,乘法(torch cuda 不支持 FP8_E4M3、FP8_E5M2),,
 jax.lax.ne,torch.ops.aten.ne.Tensor,elementwise,不等于比较,,
 jax.lax.neg,torch.ops.aten.neg.default,elementwise,取负,,FP8_E4M3、FP8_E5M2
 jax.lax.nextafter,torch.ops.aten.nextafter.default,elementwise,朝向下一个可表示浮点,,FP8_E4M3、FP8_E5M2

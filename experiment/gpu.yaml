@@ -1,0 +1,11 @@
+resources:
+  accelerators: H100:1
+  use_spot: true
+
+workdir: ~/Program/FUEL-JAX/
+
+file_mounts:
+  ~/.ssh/id_rsa: ~/.ssh/id_rsa
+setup: |
+  chmod 600 ~/.ssh/id_rsa
+  rm ~/.ssh/config
