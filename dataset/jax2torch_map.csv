@@ -81,5 +81,5 @@ jax.lax.linalg.lu,torch.ops.aten.linalg_lu_factor.default,linalg,LU 分解,BF16�
 jax.lax.linalg.qr,torch.ops.aten.linalg_qr.default,linalg,QR 分解,BF16、FP8_E4M3、FP8_E5M2,BF16、FP8_E4M3、FP8_E5M2
 jax.lax.linalg.svd,torch.ops.aten.linalg_svd.default,linalg,奇异值分解,BF16、FP8_E4M3、FP8_E5M2,BF16、FP8_E4M3、FP8_E5M2
 jax.lax.linalg.triangular_solve,torch.ops.aten.linalg_solve_triangular.default,linalg,三角矩阵求解,,BF16、FP8_E4M3、FP8_E5M2
-jax.lax.dot,torch.ops.aten.einsum.default,other,点积/矩阵乘(torch "bmm" not implemented for 'FP8_E4M3、FP8_E5M2'),,
+jax.lax.dot,torch.ops.aten.einsum.default,other,点积/矩阵乘(torch bmm not implemented for FP8_E4M3、FP8_E5M2),,
 jax.lax.sort,torch.ops.aten.sort.default,other,排序,,FP8_E4M3、FP8_E5M2
