@@ -69,8 +69,15 @@ def _run_op(fn, inp: dict, op_name: str):
         return fn(**inp)
     dnums = _dot_dimension_numbers(inp["lhs"].ndim, inp["rhs"].ndim)
     if dnums is None:
-        return fn(**inp)
-    return fn(inp["lhs"], inp["rhs"], dimension_numbers=dnums)
+        return fn(
+            **inp, precision=jax.lax.Precision.HIGHEST
+        )  # 默认最高精度，避免数值误差过大导致验证失败
+    return fn(
+        inp["lhs"],
+        inp["rhs"],
+        dimension_numbers=dnums,
+        precision=jax.lax.Precision.HIGHEST,
+    )
 
 
 def _run_op_jit(fn, inp: dict, op_name: str):

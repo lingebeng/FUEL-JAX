@@ -54,13 +54,13 @@ def tensor2ndarray(tensor):
         tensor = tensor[0]
     # @haifeng only tensor cpu can transform ndarray
     tensor = tensor.detach().to("cpu").to(torch.float32).numpy()
-    return np.array(tensor, dtype=np.float32)
+    return np.array(tensor, dtype=np.float64)
 
 
 def Array2ndarray(Arr):
     if type(Arr) in (tuple, list):
         Arr = Arr[0]
-    return np.array(Arr, dtype=np.float32)
+    return np.array(Arr, dtype=np.float64)
 
 
 def get_torch_device(device: str) -> str:
