@@ -29,7 +29,7 @@ jax.lax.floor,torch.ops.aten.floor.default,elementwise,向下取整,,FP8_E4M3、
 jax.lax.ge,torch.ops.aten.ge.Tensor,elementwise,大于等于比较,,FP8_E4M3、FP8_E5M2
 jax.lax.gt,torch.ops.aten.gt.Tensor,elementwise,大于比较,,FP8_E4M3、FP8_E5M2
 jax.lax.igamma,torch.special.gammainc,elementwise,下不完全伽玛函数,,FP8_E4M3、FP8_E5M2
-jax.lax.igammac,torch.special.gammaincc,elementwise,上不完全伽玛函数,,FP8_E4M3、FP8_E5M2
+jax.lax.igammac,torch.special.gammaincc,elementwise,上不完全伽玛函数(torch cuda不支持FP16),,FP8_E4M3、FP8_E5M2
 jax.lax.integer_pow,torch.ops.aten.pow.Tensor_Tensor,elementwise,整数幂,,FP8_E4M3、FP8_E5M2
 jax.lax.is_finite,torch.ops.aten.isfinite.default,elementwise,是否为有限值(torch cuda 不支持FP8_E5M2),,FP8_E4M3
 jax.lax.le,torch.ops.aten.le.Tensor,elementwise,小于等于比较,,FP8_E4M3、FP8_E5M2
