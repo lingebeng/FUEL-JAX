@@ -1,16 +1,27 @@
 [project]
 name = "fuel-jax"
 version = "0.1.0"
-description = "Add your description here"
+description = "A JAX-based fuzzing tool for TPU/GPU environments"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "jax>=0.9.0",
     "loguru>=0.7.3",
     "numpy>=2.4.2",
     "openai>=2.16.0",
     "pre-commit>=4.5.1",
     "ruff>=0.15.0",
-    "torch>=2.10.0",
     "typer>=0.21.1",
+]
+[project.optional-dependencies]
+tpu = [
+    "jax[tpu]",
+    "libtpu==0.0.30",
+]
+cuda = [
+    "jax[cuda]",
+    "torch",
+]
+cpu = [
+    "jax",
+    "torch",
 ]
