@@ -6,6 +6,7 @@ workdir: ~/Program/FUEL-JAX/
 
 file_mounts:
   ~/.ssh/id_rsa: ~/.ssh/id_rsa
+  ~/.codex: ~/.codex
 setup: |
   chmod 600 ~/.ssh/id_rsa
   rm ~/.ssh/config
