@@ -16,6 +16,7 @@ dependencies = [
 tpu = [
     "jax[tpu]",
     "libtpu==0.0.30",
+    "torch",
 ]
 cuda = [
     "jax[cuda]",

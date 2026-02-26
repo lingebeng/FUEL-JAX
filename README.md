@@ -23,7 +23,7 @@
 - 推荐使用 `uv`：
 
 ```bash
-uv sync --extra cpu # (gpu tpu)
+uv sync --extra cpu # (cuda tpu)
 ```
 
 ## 快速开始

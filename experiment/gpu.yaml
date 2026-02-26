@@ -10,6 +10,10 @@ file_mounts:
 setup: |
   chmod 600 ~/.ssh/id_rsa
   rm -f ~/.ssh/config
+
+  # 自动获取并添加 GitHub 的 SSH 主机指纹，绕过 yes/no 交互
+  ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
   git config --global user.name "lingebeng" && git config --global user.email "1371675203@qq.com"
   echo  "conda deactivate" >> ~/.bashrc
 
