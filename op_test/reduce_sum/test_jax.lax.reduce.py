@@ -12,11 +12,11 @@ def hardcore_reduce(x):
 
 def main():
     print("准备生成数据...")
-    # 构造一个 1024 长度的 float16 数组
+    # 构造一个 1024 长度的 bfloat16 数组
     # 1024 恰好是很多 GPU 架构中一个 Thread Block 的最大线程数，
     # 这会触发非常经典的 Warp/Block 级别的归约逻辑。
     key = jax.random.PRNGKey(42)
-    x = jax.random.normal(key, (1024,), dtype=jnp.float16)
+    x = jax.random.normal(key, (1024,), dtype=jnp.bfloat16)
     
     print("触发 XLA 编译 (第一次运行 JIT 函数)...")
     # 只有第一次运行时，JAX 才会真正调用 XLA 进行 Lowering 和编译

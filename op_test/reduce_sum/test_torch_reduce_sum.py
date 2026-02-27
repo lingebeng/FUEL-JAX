@@ -8,7 +8,7 @@ def my_sum(x):
 
 def main():
     # 构造与 JAX 对标的数据
-    x = torch.randn(1024, dtype=torch.float16, device='cuda')
+    x = torch.randn(1024, dtype=torch.bfloat16, device='cuda')
     
     # 预热并触发编译
     res = my_sum(x)
