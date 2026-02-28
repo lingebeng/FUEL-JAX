@@ -293,19 +293,16 @@ linalg:
       x:
         strategy: spd_matrix
         eps: 1e-3
-
   - op_name: jax.lax.linalg.eig
     input: [x]
     generation:
       x:
         strategy: square_normal
-
   - op_name: jax.lax.linalg.eigh
     input: [x]
     generation:
       x:
         strategy: symmetric_matrix
-
   - op_name: jax.lax.linalg.householder_product
     input: [a, taus]
     generation:
@@ -313,23 +310,19 @@ linalg:
       taus:
         strategy: taus_from_input
         from_input: a
-
   - op_name: jax.lax.linalg.lu
     input: [x]
     generation:
       x:
         strategy: square_normal
-
   - op_name: jax.lax.linalg.qr
     input: [x]
     generation:
       x: *strat_normal
-
   - op_name: jax.lax.linalg.svd
     input: [x]
     generation:
       x: *strat_normal
-
   - op_name: jax.lax.linalg.triangular_solve
     input: [a, b]
     generation:

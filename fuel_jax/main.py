@@ -85,7 +85,7 @@ def exec(
         ops = list_ops(test_id=test_id)
     else:
         ops = [op_name]
-    precisions = PRECISION_MAP.keys()
+    precisions = list(PRECISION_MAP.keys())[1:]  # Skip the first precision FP64
 
     for op in ops:
         RECORD(
@@ -139,7 +139,10 @@ def exec(
                 continue
 
             _exec(op, op, "jax", precision, device, mode, test_id)
-            _exec(op, torch_op, "torch", precision, device, mode, test_id)
+            if (
+                test_id != -1
+            ):  # Only run torch for specific test_id, not for full "all" runs
+                _exec(op, torch_op, "torch", precision, device, mode, test_id)
 
 
 @app.command()

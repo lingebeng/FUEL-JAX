@@ -5,6 +5,7 @@ ROOT_DIR = Path(__file__).parent.parent.parent.resolve()
 
 
 PRECISION_MAP: dict[str, dict[str, str]] = {
+    "FP64": {"jax": "jnp.float64", "torch": "torch.float64"},
     "FP32": {"jax": "jnp.float32", "torch": "torch.float32"},
     "BF16": {"jax": "jnp.bfloat16", "torch": "torch.bfloat16"},
     "FP8_E4M3": {"jax": "jnp.float8_e4m3fn", "torch": "torch.float8_e4m3fn"},

@@ -165,6 +165,21 @@ def RECORD(filename, content, mode="a"):
         f.write(content + "\n")
 
 
+def get_next_precision_dtype(dtype_str: str) -> str:
+    if dtype_str == "FP8_E4M3":
+        return "BF16"
+    elif dtype_str == "FP8_E5M2":
+        return "BF16"
+    elif dtype_str == "BF16":
+        return "FP32"
+    elif dtype_str == "FP16":
+        return "FP32"
+    elif dtype_str == "FP32":
+        return "FP64"
+    else:
+        raise ValueError(f"Unsupported dtype: {dtype_str}")
+
+
 if __name__ == "__main__":
     x = np.random.rand(100, 64, 64, 3)
     y = np.random.randint(0, 10, size=(100,))

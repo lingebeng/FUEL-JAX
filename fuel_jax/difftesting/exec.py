@@ -11,7 +11,10 @@ from ..config.config import (
 
 def _exec(jax_op, op_name, framework, precision, device, mode="eager", test_id=0):
     input_file = ROOT_DIR / "input" / jax_op / f"{str(test_id).zfill(2)}.npz"
-    module = f"fuel_jax.script.{framework}_script"
+    if test_id == -1:
+        module = f"fuel_jax.script.{framework}_script_cpu"
+    else:
+        module = f"fuel_jax.script.{framework}_script"
     RECORD(
         ExecErrorLogger,
         f"Executing {op_name} in {framework}-{device}-{precision}-{mode} with input: {input_file}",
