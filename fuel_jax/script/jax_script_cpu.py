@@ -62,7 +62,7 @@ def _run_op(fn, inp: dict, op_name: str):
         return fn(**inp)[0]
     if op_name == "jax.lax.round":
         # 默认是四舍五入，但为了减少数值误差导致的验证失败，这里强制使用 ties_to_even 模式（银行家舍入）与 PyTorch对齐
-        return fn(**inp, rounding_method=jax.lax.RoundingMethod.TIES_TO_EVEN)
+        return fn(**inp, rounding_method=jax.lax.RoundingMethod.TO_NEAREST_EVEN)
     if op_name == "jax.lax.linalg.triangular_solve":
         return fn(
             inp["a"],
