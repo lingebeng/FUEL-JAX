@@ -139,7 +139,10 @@ def main(
     # Load input data
     inp = load_npz(input_file)
     # Convert input data to JAX array with specified precision
-    target_dtype = eval(PRECISION_MAP[get_next_precision_dtype(precision)]["jax"])
+    if device == "cpu":
+        target_dtype = eval(PRECISION_MAP[get_next_precision_dtype(precision)]["jax"])
+    else:
+        target_dtype = eval(PRECISION_MAP[precision]["jax"])
     target_device = jax.devices(get_jax_device(device=device))[0]
 
     for k, v in inp.items():
