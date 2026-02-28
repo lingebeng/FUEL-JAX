@@ -110,38 +110,29 @@ def exec(
             logger.warning(f"Missing torch mapping for {op}, skipping.")
             continue
         for precision in precisions:
-            if device == "tpu":
-                if precision in jax_unsupported:
-                    msg = (
-                        f"Skip {op} on jax-{device}-{precision}: "
-                        f"precision marked unsupported in csv."
-                    )
-                    RECORD(ExecErrorLogger, msg)
-                    logger.info(msg)
-                    continue
+            if precision not in jax_unsupported:
                 _exec(op, op, "jax", precision, device, mode, test_id)
-                continue
-
-            # On cpu/gpu we run only comparable precisions supported by BOTH JAX and Torch.
-            if precision in jax_unsupported or precision in torch_unsupported:
-                reason = []
-                if precision in jax_unsupported:
-                    reason.append("jax unsupported")
-                if precision in torch_unsupported:
-                    reason.append("torch unsupported")
+            else:
                 msg = (
                     f"Skip {op} on {device}-{precision}: "
-                    + ", ".join(reason)
+                    + ", jax unsupported"
                     + " (from csv)."
                 )
                 RECORD(ExecErrorLogger, msg)
                 logger.info(msg)
-                continue
-
-            _exec(op, op, "jax", precision, device, mode, test_id)
             if (
-                test_id != -1
-            ):  # Only run torch for specific test_id, not for full "all" runs
+                device == "tpu" or test_id == -1
+            ):  # Only run torch for specific test_id(!= -1), and skip torch entirely for TPU which is not supported
+                continue
+            if precision not in torch_unsupported:
+                msg = (
+                    f"Skip {op} on torch-{device}-{precision}: "
+                    + ", torch unsupported"
+                    + " (from csv)."
+                )
+                RECORD(ExecErrorLogger, msg)
+                logger.info(msg)
+            else:
                 _exec(op, torch_op, "torch", precision, device, mode, test_id)
 
 
