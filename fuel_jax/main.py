@@ -110,9 +110,7 @@ def exec(
             logger.warning(f"Missing torch mapping for {op}, skipping.")
             continue
         for precision in precisions:
-            if precision not in jax_unsupported:
-                _exec(op, op, "jax", precision, device, mode, test_id)
-            else:
+            if precision in jax_unsupported:
                 msg = (
                     f"Skip {op} on {device}-{precision}: "
                     + ", jax unsupported"
@@ -120,11 +118,13 @@ def exec(
                 )
                 RECORD(ExecErrorLogger, msg)
                 logger.info(msg)
+            else:
+                _exec(op, op, "jax", precision, device, mode, test_id)
             if (
                 device == "tpu" or test_id == -1
             ):  # Only run torch for specific test_id(!= -1), and skip torch entirely for TPU which is not supported
                 continue
-            if precision not in torch_unsupported:
+            if precision in torch_unsupported:
                 msg = (
                     f"Skip {op} on torch-{device}-{precision}: "
                     + ", torch unsupported"
