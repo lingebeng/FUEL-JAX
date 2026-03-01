@@ -70,6 +70,7 @@ def _empty_metrics(total_count: int) -> dict[str, float | int]:
         "mean_ulp_diff": 0.0,
         "max_rel_diff": 0.0,
         "p99_rel_diff": 0.0,
+        "mean_rel_diff": 0.0,
         "cosine_sim": 1.0,
         "close_mismatch_ratio": 0.0,
         "nonfinite_mismatch_ratio": 0.0,
@@ -217,6 +218,7 @@ def evaluate_diff(
         )
         metrics["max_rel_diff"] = float(np.max(rel_diff))
         metrics["p99_rel_diff"] = _safe_percentile(rel_diff, 99.0)
+        metrics["mean_rel_diff"] = float(np.mean(rel_diff))
         metrics["cosine_sim"] = _cosine_sim(xf, yf)
         metrics["close_mismatch_ratio"] = float(np.mean(~close_mask))
 
