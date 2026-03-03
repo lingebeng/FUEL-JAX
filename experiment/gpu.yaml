@@ -35,3 +35,5 @@ setup: |
   cd ~/sky_workdir
 
   git clone git@github.com:lingebeng/FUEL-JAX.git
+  cd FUEL-JAX
+  uv sync --extra cuda

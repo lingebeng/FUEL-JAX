@@ -35,6 +35,8 @@ def format_metrics(metrics: Mapping[str, float | int]) -> str:
     for key, value in metrics.items():
         if isinstance(value, int):
             parts.append(f"{key}={value}")
+        elif key.endswith("_x") or key.endswith("_y"):
+            parts.append(f"{key}={value:.17g}")
         else:
             parts.append(f"{key}={value:.6g}")
 
@@ -208,9 +210,16 @@ def evaluate_diff(
         close_mask = np.isclose(xf, yf, atol=atol, rtol=rtol, equal_nan=True)
         ulp_diff = _quantized_ulp_diff(xf, yf, precision=precision)
 
+        idx_abs = int(np.argmax(abs_diff))
+        idx_rel = int(np.argmax(rel_diff))
+        orig_indices = np.where(finite_mask.ravel())[0]
+
         metrics["max_abs_diff"] = float(np.max(abs_diff))
         metrics["p99_abs_diff"] = _safe_percentile(abs_diff, 99.0)
         metrics["mean_abs_diff"] = float(np.mean(abs_diff))
+        metrics["max_abs_diff_idx"] = int(orig_indices[idx_abs])
+        metrics["max_abs_diff_x"] = float(xf[idx_abs])
+        metrics["max_abs_diff_y"] = float(yf[idx_abs])
         metrics["max_ulp_diff"] = float(np.max(ulp_diff)) if ulp_diff.size > 0 else 0.0
         metrics["p99_ulp_diff"] = _safe_percentile(ulp_diff, 99.0)
         metrics["mean_ulp_diff"] = (
@@ -219,6 +228,9 @@ def evaluate_diff(
         metrics["max_rel_diff"] = float(np.max(rel_diff))
         metrics["p99_rel_diff"] = _safe_percentile(rel_diff, 99.0)
         metrics["mean_rel_diff"] = float(np.mean(rel_diff))
+        metrics["max_rel_diff_idx"] = int(orig_indices[idx_rel])
+        metrics["max_rel_diff_x"] = float(xf[idx_rel])
+        metrics["max_rel_diff_y"] = float(yf[idx_rel])
         metrics["cosine_sim"] = _cosine_sim(xf, yf)
         metrics["close_mismatch_ratio"] = float(np.mean(~close_mask))
 
